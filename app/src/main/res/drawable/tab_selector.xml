@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- State saat tab dipilih -->
+    <item android:state_selected="true">
+        <shape android:shape="oval">
+            <solid android:color="@color/blue_500"/> <!-- Ganti dengan warna aktif Anda -->
+            <size android:width="8dp" android:height="8dp"/>
+        </shape>
+    </item>
+
+    <!-- State default (tidak dipilih) -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/grey_300"/> <!-- Ganti dengan warna non-aktif Anda -->
+            <size android:width="8dp" android:height="8dp"/>
+        </shape>
+    </item>
+</selector>

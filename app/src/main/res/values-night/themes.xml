@@ -1,0 +1,78 @@
+<resources>
+    <!-- Base theme untuk Dark Mode -->
+    <style name="Base.Theme.EnerTrack" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Tidak perlu ubah apa-apa di base -->
+    </style>
+
+    <style name="Theme.EnerTrack" parent="Base.Theme.EnerTrack">
+        <!-- WARNA UTAMA (Tetap Biru, biasanya lebih terang dikit tapi pake yg sama gpp) -->
+        <item name="colorPrimary">@color/primary_accent</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <!-- CONTAINER (PENTING: Jangan pake Soft Blue, pake Mirage/Gelap) -->
+        <item name="colorPrimaryContainer">@color/mirage</item>
+        <item name="colorOnPrimaryContainer">@color/primary_accent</item> <!-- Teks biru di atas gelap -->
+
+        <!-- WARNA SEKUNDER -->
+        <item name="colorSecondary">@color/primary_accent</item>
+        <item name="colorOnSecondary">@color/mirage</item> <!-- Teks gelap di atas tombol hijau -->
+        <item name="colorSecondaryContainer">@color/neutral_800</item> <!-- Container gelap -->
+        <item name="colorOnSecondaryContainer">@color/primary_accent</item>
+
+        <!-- WARNA TERTIARY -->
+        <item name="colorTertiary">@color/primary_accent</item>
+        <item name="colorOnTertiary">@color/white</item>
+        <item name="colorTertiaryContainer">@color/mirage</item>
+
+        <!-- BACKGROUND & SURFACE (GELAP) -->
+        <item name="android:colorBackground">@color/neutral_900</item> <!-- Gelap banget -->
+        <item name="colorSurface">@color/neutral_800</item> <!-- Sedikit lebih terang (Card) -->
+        <item name="colorOnSurface">@color/neutral_200</item> <!-- Teks Putih/Abu -->
+        <item name="colorSurfaceVariant">@color/neutral_800</item>
+        <item name="colorOnSurfaceVariant">@color/neutral_300</item>
+
+        <!-- TEKS DEFAULT (PUTIH DI DARK MODE) -->
+        <item name="android:textColorPrimary">@color/neutral_100</item>
+        <item name="android:textColorSecondary">@color/neutral_400</item>
+
+        <!-- WARNA OUTLINE (Garis tepi input text) -->
+        <item name="colorOutline">@color/neutral_600</item>
+        <item name="colorOutlineVariant">@color/neutral_700</item>
+    </style>
+
+    <!-- Style CardView Summary (Dark Mode) -->
+    <style name="Widget.EnerTrack.SummaryCard" parent="Widget.Material3.CardView.Filled">
+        <item name="cardBackgroundColor">@color/neutral_800</item> <!-- Gelap -->
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.EnerTrack.Medium</item>
+    </style>
+
+    <!-- Style CardView History (Dark Mode) -->
+    <style name="Widget.EnerTrack.HistoryCard" parent="Widget.Material3.CardView.Filled">
+        <item name="cardBackgroundColor">@color/neutral_800</item> <!-- Gelap -->
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.EnerTrack.Medium</item>
+    </style>
+
+    <style name="ShapeAppearance.EnerTrack.Medium" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <!-- TEXT STYLES (Diupdate ke warna terang untuk dark mode) -->
+
+    <style name="TextAppearance.EnerTrack.Title" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/neutral_100</item> <!-- Putih -->
+    </style>
+
+    <style name="TextAppearance.EnerTrack.Body" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/neutral_200</item> <!-- Abu Terang -->
+    </style>
+
+    <style name="TextAppearance.EnerTrack.Label" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/neutral_400</item> <!-- Abu Sedang -->
+    </style>
+
+</resources>

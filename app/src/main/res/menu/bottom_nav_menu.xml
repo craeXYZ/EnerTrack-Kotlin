@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/ic_home"
+        android:title="Home" />
+    <item
+        android:id="@+id/navigation_analytics"
+        android:icon="@drawable/ic_analytics"
+        android:title="Analytics" />
+    <item
+        android:id="@+id/navigation_calculate"
+        android:icon="@drawable/ic_calculator"
+        android:title="Calculate" />
+    <item
+        android:id="@+id/navigation_ai_insight"
+        android:icon="@drawable/ic_robot"
+        android:title="AI Check" />
+    <item
+        android:id="@+id/navigation_history"
+        android:icon="@drawable/ic_history"
+        android:title="History" />
+</menu>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F9FAFB"
+    tools:context=".ui.history.HistoryFragment">
+
+    <TextView
+        style="@style/TextAppearance.EnerTrack.Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp"
+        android:text="Calculation History" />
+    <TextView
+        style="@style/TextAppearance.EnerTrack.Label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:text="View your past calculations" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        app:startIconDrawable="@android:drawable/ic_menu_search">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Search appliance name..."
+            android:inputType="text"
+            android:maxLines="1"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:scrollbars="none">
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_categories"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
+            app:singleLine="true"
+            app:singleSelection="true"/>
+    </HorizontalScrollView>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_history"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:padding="16dp"
+                tools:listitem="@layout/item_history_card" />
+            <TextView
+                android:id="@+id/tv_empty_data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No history data found."
+                android:layout_gravity="center"
+                android:visibility="gone"/>
+        </FrameLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_pagination"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:padding="8dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+        <Button
+            android:id="@+id/btn_previous"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Previous"/>
+        <TextView
+            android:id="@+id/tv_page_info"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            tools:text="Page 1 of 3"/>
+        <Button
+            android:id="@+id/btn_next"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Next"/>
+    </LinearLayout>
+
+</LinearLayout>

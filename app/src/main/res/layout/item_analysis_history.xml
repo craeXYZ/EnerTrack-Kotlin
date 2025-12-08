@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingVertical="12dp"
+    android:paddingHorizontal="8dp"
+    android:gravity="center_vertical"
+    android:background="?attr/selectableItemBackground">
+
+    <CheckBox
+        android:id="@+id/checkbox_select"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="8dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_appliance_name"
+            style="@style/TextAppearance.Material3.TitleMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Smart TV" />
+
+        <TextView
+            android:id="@+id/tv_appliance_details"
+            style="@style/TextAppearance.Material3.BodySmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Brand: Samsung • Entertainment" />
+
+        <TextView
+            android:id="@+id/tv_appliance_specs"
+            style="@style/TextAppearance.Material3.BodySmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="200W • 10h/day" />
+
+        <TextView
+            android:id="@+id/tv_appliance_energy"
+            style="@style/TextAppearance.Material3.BodyMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/colorPrimary"
+            android:layout_marginTop="4dp"
+            tools:text="Daily: 2.00 kWh • Monthly: 60.00 kWh" />
+    </LinearLayout>
+
+</LinearLayout>

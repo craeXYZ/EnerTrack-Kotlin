@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_navigation"
+    app:startDestination="@id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.enertrack.ui.home.HomeFragment"
+        android:label="Dashboard"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/navigation_analytics"
+        android:name="com.enertrack.ui.analytic.AnalyticsFragment"
+        android:label="Analytics"
+        tools:layout="@layout/fragment_analytics" />
+
+    <fragment
+        android:id="@+id/navigation_calculate"
+        android:name="com.enertrack.ui.calculate.CalculateFragment"
+        android:label="Calculate"
+        tools:layout="@layout/fragment_calculate" />
+
+    <fragment
+        android:id="@+id/navigation_ai_insight"
+        android:name="com.enertrack.ui.ai.AiInsightFragment"
+        android:label="AI Analysis"
+        tools:layout="@layout/fragment_ai_insight">
+
+        <!-- === TAMBAHAN ACTION (JALUR) KE CHAT === -->
+        <action
+            android:id="@+id/action_aiInsight_to_chat"
+            app:destination="@id/navigation_ai_chat"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_history"
+        android:name="com.enertrack.ui.history.HistoryFragment"
+        android:label="History"
+        tools:layout="@layout/fragment_history" />
+
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.enertrack.ui.profile.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile" >
+
+        <action
+            android:id="@+id/action_profile_to_changePassword"
+            app:destination="@id/navigation_change_password" />
+
+        <action
+            android:id="@+id/action_profile_to_themeSettings"
+            app:destination="@id/navigation_theme_settings" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_change_password"
+        android:name="com.enertrack.ui.profile.ChangePasswordFragment"
+        android:label="Change Password"
+        tools:layout="@layout/fragment_change_password" />
+
+    <fragment
+        android:id="@+id/navigation_theme_settings"
+        android:name="com.enertrack.ui.profile.ThemeSettingsFragment"
+        android:label="Change Appearance"
+        tools:layout="@layout/fragment_theme_settings" />
+
+    <!-- === TAMBAHAN FRAGMENT BARU (CHAT) === -->
+    <!-- Pastikan nama package dan layoutnya sesuai file kamu -->
+    <fragment
+        android:id="@+id/navigation_ai_chat"
+        android:name="com.enertrack.ui.ai.AiChatFragment"
+        android:label="AI Assistant"
+        tools:layout="@layout/fragment_ai_chat" />
+
+</navigation>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Jarak antar titik diperlebar (8dp) biar gak mepet -->
+    <item
+        android:start="8dp"
+        android:end="8dp"
+        android:gravity="center">
+
+        <selector>
+            <!-- Aktif: Diperbesar jadi 16dp -->
+            <item android:state_selected="true">
+                <shape android:shape="oval">
+                    <solid android:color="@color/mainBlue"/>
+                    <size android:width="16dp" android:height="16dp"/>
+                </shape>
+            </item>
+
+            <!-- Tidak Aktif: Diperbesar jadi 12dp -->
+            <item>
+                <shape android:shape="oval">
+                    <solid android:color="#E0E0E0"/>
+                    <size android:width="12dp" android:height="12dp"/>
+                </shape>
+            </item>
+        </selector>
+    </item>
+</layer-list>

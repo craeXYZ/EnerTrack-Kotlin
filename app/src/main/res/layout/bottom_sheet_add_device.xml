@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  FILE: bottom_sheet_add_device.xml (v5 - FIX DROPDOWN UI)
+  - Menambahkan dropDownHeight="200dp" agar dropdown tidak menutupi seluruh layar.
+  - Menambahkan dropDownVerticalOffset agar ada jarak.
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <!-- Handle bar -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:background="#E0E0E0"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="24dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Device"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="16dp" />
+
+    <!-- 1. Dropdown Brand (SEARCHABLE & SCROLLABLE) -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layout_brand"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:hint="Select Brand">
+
+        <!--
+          UPDATE PENTING:
+          - android:dropDownHeight="200dp": Biar list-nya ga kepanjangan/numpuk.
+          - android:dropDownVerticalOffset="4dp": Kasih jarak dikit.
+        -->
+        <AutoCompleteTextView
+            android:id="@+id/dropdown_brand"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:imeOptions="actionNext"
+            android:dropDownHeight="200dp"
+            android:dropDownVerticalOffset="4dp"
+            tools:text="Samsung"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- 2. Dropdown Device Name (SEARCHABLE & SCROLLABLE) -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layout_device_name"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:hint="Select Device"
+        android:enabled="false">
+
+        <!-- UPDATE PENTING: Sama kayak atas -->
+        <AutoCompleteTextView
+            android:id="@+id/dropdown_device"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:imeOptions="actionNext"
+            android:dropDownHeight="200dp"
+            android:dropDownVerticalOffset="4dp"
+            tools:text="Smart TV"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- 3. Power (Watt) - Auto-filled -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layout_power"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:hint="Power (Watt)">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_power"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            tools:text="120"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Power auto-filled based on device data"
+        android:textSize="12sp"
+        android:textColor="#757575"
+        android:layout_marginBottom="12dp"
+        android:layout_marginStart="4dp"/>
+
+    <!-- 4. Input Daily Usage (Jam) - Manual -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layout_usage"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:hint="Daily Usage (Hour/s)">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_usage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            tools:text="5"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_save_device"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add to List"
+        android:paddingVertical="12dp"
+        app:cornerRadius="8dp"/>
+
+</LinearLayout>

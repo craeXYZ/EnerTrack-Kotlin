@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardCornerRadius="10dp"
+    app:cardBackgroundColor="@color/main_background"
+    android:layout_marginBottom="10dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_toStartOf="@id/tv_daily_kwh"
+            android:layout_marginEnd="10dp"
+            android:layout_centerVertical="true">
+
+            <TextView
+                android:id="@+id/tv_appliance_name"
+                style="@style/TextAppearance.EnerTrack.Body"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Air Conditioner"/>
+
+            <TextView
+                android:id="@+id/tv_category_date"
+                style="@style/TextAppearance.EnerTrack.Label"
+                android:textSize="12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Cooling • 25 October 2025"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_daily_kwh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/mainBlue"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            tools:text="1.50 kWh"/>
+    </RelativeLayout>
+</com.google.android.material.card.MaterialCardView>

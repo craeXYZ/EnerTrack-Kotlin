@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="30dp">
+
+    <!-- ID: iv_slide_icon -->
+    <ImageView
+        android:id="@+id/iv_slide_icon"
+        android:layout_width="400dp"
+        android:layout_height="400dp"
+        android:layout_marginBottom="36dp"
+        tools:src="@drawable/ic_launcher_background" />
+
+    <!-- ID: tv_slide_title -->
+    <TextView
+        android:id="@+id/tv_slide_title"
+        style="@style/TextAppearance.EnerTrack.Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        tools:text="Slide Title" />
+
+    <!-- ID: tv_slide_description -->
+    <TextView
+        android:id="@+id/tv_slide_description"
+        style="@style/TextAppearance.EnerTrack.Body"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/neutral_500"
+        tools:text="This is a sample description for the onboarding slide." />
+</LinearLayout>

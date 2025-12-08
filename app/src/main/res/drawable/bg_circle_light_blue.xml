@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <!-- Warna biru sangat muda (mirip style Material Blue 50) -->
+    <solid android:color="#E3F2FD" />
+</shape>

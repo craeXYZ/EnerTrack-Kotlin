@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "366241735800",
+    "firebase_url": "https://enertrack-ccd32-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "enertrack-ccd32",
+    "storage_bucket": "enertrack-ccd32.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:366241735800:android:d39febb411609f57ef398d",
+        "android_client_info": {
+          "package_name": "com.enertrack"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBZC137bX7KI4Dt8lRBhMe5Nv3g9ci3TY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

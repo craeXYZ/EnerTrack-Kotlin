@@ -1,0 +1,686 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- FILE: fragment_calculate.xml (UPDATED: Translate to English) -->
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F9FAFB"
+    tools:context=".ui.calculate.CalculateFragment">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:paddingBottom="80dp"
+        android:clipToPadding="false">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Header -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@android:color/white"
+                android:elevation="4dp"
+                android:paddingBottom="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:background="@color/white">
+                    <TextView
+                        style="@style/TextAppearance.EnerTrack.Title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Energy Check" />
+                    <TextView
+                        style="@style/TextAppearance.EnerTrack.Label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Manual vs IoT Monitor" />
+                </LinearLayout>
+
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tab_layout_calculate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Manual Calc"/>
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="IoT Status"/>
+                </com.google.android.material.tabs.TabLayout>
+            </LinearLayout>
+
+            <!-- ========================================= -->
+            <!-- CONTEN 1: MANUAL CALCULATOR -->
+            <!-- ========================================= -->
+            <LinearLayout
+                android:id="@+id/calculator_content_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <!-- WARNING BANNER IoT -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="#FFCC80"
+                    app:cardBackgroundColor="#FFF8E1">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="12dp"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_lightbulb_outline"
+                            app:tint="#F57C00"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginStart="12dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Estimation Mode"
+                                android:textStyle="bold"
+                                android:textSize="14sp"
+                                android:textColor="#F57C00"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="This is an estimated calculation. For 100% accuracy, please use EnerTrack IoT device."
+                                android:textSize="12sp"
+                                android:textColor="#E65100"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Dropdown Kapasitas -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/white"
+                    android:paddingBottom="16dp"
+                    android:elevation="4dp"
+                    android:layout_marginBottom="16dp">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/layout_capacity"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:hint="Home Power Capacity"> <!-- Changed to English -->
+
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                            android:id="@+id/dropdown_capacity"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none"
+                            android:dropDownHeight="250dp"
+                            android:popupBackground="@android:color/white"
+                            tools:text="2.200 VA"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <!-- Isi Calculator -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="16dp">
+
+                    <TextView
+                        android:id="@+id/tv_total_summary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Total Est: Rp 0 / month"
+                        android:textColor="@color/mainBlue"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center"
+                        android:layout_marginBottom="16dp"/>
+
+                    <LinearLayout
+                        android:id="@+id/layout_empty_state"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="32dp"
+                        android:visibility="visible">
+                        <ImageView
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:src="@drawable/ic_calculator"
+                            app:tint="#BDBDBD"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="No devices added yet"
+                            android:textColor="#757575"
+                            android:textStyle="bold"
+                            android:layout_marginTop="16dp"/>
+                    </LinearLayout>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/card_summary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="#E0E0E0"
+                        app:strokeWidth="1dp"
+                        app:cardBackgroundColor="#F5F5FA"
+                        android:visibility="gone">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:paddingVertical="16dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Device Summary"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/black"
+                                android:layout_marginStart="16dp"
+                                android:layout_marginBottom="8dp"/>
+                            <FrameLayout
+                                android:id="@+id/container_device_item"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingHorizontal="16dp"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="#E0E0E0"
+                                android:layout_marginTop="16dp"
+                                android:layout_marginBottom="16dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Consumption Analysis"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/black"
+                                android:layout_marginStart="16dp"
+                                android:layout_marginBottom="12dp"/>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:paddingHorizontal="16dp">
+                                <LinearLayout
+                                    android:id="@+id/layout_warning"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:padding="12dp"
+                                    android:background="@drawable/bg_rounded_light_green"
+                                    android:layout_marginBottom="16dp">
+                                    <TextView
+                                        android:id="@+id/tv_warning_message"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="✅ Safe Usage"
+                                        android:textStyle="bold"
+                                        android:textColor="@color/energyGreen"/>
+                                    <TextView
+                                        android:id="@+id/tv_warning_details"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="0W of 1300W (0%)"
+                                        android:textSize="12sp"
+                                        android:textColor="@color/energyGreen"/>
+                                </LinearLayout>
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:baselineAligned="false">
+                                    <LinearLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:orientation="vertical">
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="Daily (kWh)"
+                                            android:textSize="12sp"
+                                            android:textColor="#757575"/>
+                                        <TextView
+                                            android:id="@+id/tv_total_daily"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="0.00"
+                                            android:textSize="18sp"
+                                            android:textStyle="bold"
+                                            android:textColor="@android:color/black"/>
+                                    </LinearLayout>
+                                    <LinearLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:orientation="vertical">
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="Est. Monthly Cost"
+                                            android:textSize="12sp"
+                                            android:textColor="#757575"/>
+                                        <TextView
+                                            android:id="@+id/tv_total_monthly_cost"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="Rp 0"
+                                            android:textSize="18sp"
+                                            android:textStyle="bold"
+                                            android:textColor="@color/mainBlue"/>
+                                    </LinearLayout>
+                                </LinearLayout>
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/btn_save_history"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="24dp"
+                                    android:text="Save to History"
+                                    android:backgroundTint="@color/energyGreen"
+                                    app:cornerRadius="8dp"/>
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/btn_reset_calc"
+                                    style="@style/Widget.Material3.Button.TextButton"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="Calculate Another Device"
+                                    android:textColor="#757575"/>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ========================================= -->
+            <!-- CONTEN 2: IoT CONTAINER -->
+            <!-- ========================================= -->
+            <LinearLayout
+                android:id="@+id/iot_content_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <!-- MODE 1: LIST DEVICE IoT -->
+                <LinearLayout
+                    android:id="@+id/layout_iot_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:visibility="visible">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Connected Devices"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:layout_marginBottom="12dp"/>
+
+                    <!-- Item List 1 -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/item_iot_device_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="#E0E0E0"
+                        app:strokeWidth="1dp"
+                        android:layout_marginBottom="12dp"
+                        app:cardBackgroundColor="@android:color/white">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="16dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+                            <ImageView
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:src="@drawable/ic_lightbulb_outline"
+                                app:tint="@color/mainBlue"
+                                android:background="@drawable/bg_rounded_light_green"
+                                android:padding="8dp"/>
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginStart="12dp"
+                                android:orientation="vertical">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Main Smart Meter"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Living Room • Online"
+                                    android:textSize="12sp"
+                                    android:textColor="#616161"/>
+                            </LinearLayout>
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_lightbulb_outline"
+                                app:tint="#BDBDBD"/>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Item List 2 (Dikasih ID) -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/item_iot_device_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="#E0E0E0"
+                        app:strokeWidth="1dp"
+                        app:cardBackgroundColor="@android:color/white">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="16dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+                            <ImageView
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:src="@drawable/ic_calculator"
+                                app:tint="#757575"
+                                android:background="#F5F5F5"
+                                android:padding="8dp"/>
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginStart="12dp"
+                                android:orientation="vertical">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Fridge Smart Plug"
+                                    android:textStyle="bold"
+                                    android:textColor="#757575"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Kitchen • Offline"
+                                    android:textSize="12sp"
+                                    android:textColor="#9E9E9E"/>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+
+                <!-- MODE 2: DETAIL DASHBOARD -->
+                <LinearLayout
+                    android:id="@+id/layout_iot_detail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:id="@+id/btn_back_to_list"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingVertical="8dp"
+                        android:layout_marginBottom="16dp">
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_home"
+                            android:rotation="180"
+                            app:tint="@color/mainBlue"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Back to List"
+                            android:textColor="@color/mainBlue"
+                            android:textStyle="bold"
+                            android:layout_marginStart="8dp"/>
+                    </LinearLayout>
+
+                    <!-- Dashboard Content -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="#E0E0E0"
+                        android:layout_marginBottom="16dp"
+                        app:cardBackgroundColor="#F0FDF4">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="16dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_lightbulb_outline"
+                                app:tint="@color/energyGreen"/>
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginStart="12dp"
+                                android:orientation="vertical">
+                                <TextView
+                                    android:id="@+id/tv_status_label"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Status: -"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/energyGreen"/>
+
+                                <TextView
+                                    android:id="@+id/tv_detail_device_info"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Device Info"
+                                    android:textSize="12sp"
+                                    android:textColor="#616161"/>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Main Wattage -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="2dp"
+                        android:layout_marginBottom="16dp"
+                        app:cardBackgroundColor="@android:color/white">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="24dp"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tv_detail_device_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Device Name"
+                                android:textColor="#757575"
+                                android:textStyle="bold"
+                                android:layout_marginBottom="4dp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Current Load"
+                                android:textSize="12sp"
+                                android:textColor="#757575"/>
+                            <TextView
+                                android:id="@+id/tv_main_watt"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0 W"
+                                android:textSize="48sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/black"/>
+
+                            <TextView
+                                android:id="@+id/tv_last_update"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Last update: -"
+                                android:textSize="12sp"
+                                android:textColor="#BDBDBD"
+                                android:layout_marginTop="8dp"/>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Detail Grid -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:baselineAligned="false"
+                        android:layout_marginBottom="16dp">
+                        <!-- Voltage -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="0dp"
+                            app:strokeColor="#E0E0E0"
+                            app:strokeWidth="1dp"
+                            android:layout_marginEnd="8dp"
+                            app:cardBackgroundColor="@android:color/white">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:padding="16dp"
+                                android:orientation="vertical"
+                                android:gravity="center">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Voltage"
+                                    android:textSize="12sp"
+                                    android:textColor="#757575"/>
+                                <TextView
+                                    android:id="@+id/tv_detail_voltage"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0 V"
+                                    android:textStyle="bold"
+                                    android:textSize="18sp"
+                                    android:textColor="@color/black"/>
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+                        <!-- Ampere -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="0dp"
+                            app:strokeColor="#E0E0E0"
+                            app:strokeWidth="1dp"
+                            android:layout_marginStart="8dp"
+                            app:cardBackgroundColor="@android:color/white">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:padding="16dp"
+                                android:orientation="vertical"
+                                android:gravity="center">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Current"
+                                    android:textSize="12sp"
+                                    android:textColor="#757575"/>
+                                <TextView
+                                    android:id="@+id/tv_detail_current"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0 A"
+                                    android:textStyle="bold"
+                                    android:textSize="18sp"
+                                    android:textColor="@color/black"/>
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+                    </LinearLayout>
+
+                    <!-- TOMBOL REFRESH -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_refresh_iot"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Refresh Connection"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:textColor="@color/mainBlue"
+                        app:strokeColor="@color/mainBlue"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_device"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="24dp"
+        android:src="@drawable/ic_calculator"
+        app:tint="@android:color/white"
+        app:backgroundTint="@color/mainBlue"
+        android:contentDescription="Add Device" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F9FAFB"
+    tools:context=".ui.ai.AiInsightFragment">
+
+    <!-- Header Custom -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@android:color/white"
+        android:padding="16dp"
+        android:gravity="center_vertical"
+        android:elevation="2dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="AI Energy Insight"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"/>
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_home"
+            app:tint="#BDBDBD"/>
+    </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:paddingBottom="80dp"
+        android:clipToPadding="false">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- 1. CARD RATING (TETAP DI ATAS) -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="#E0E0E0"
+                app:strokeWidth="1dp"
+                android:layout_marginBottom="24dp"
+                app:cardBackgroundColor="@android:color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Efisiensi Energi Bulan Ini"
+                        android:textColor="#757575"
+                        android:textSize="14sp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="B+"
+                        android:textSize="48sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/energyGreen"
+                        android:layout_marginVertical="8dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Hebat! Pemakaianmu lebih hemat 15% dibanding rata-rata tetangga."
+                        android:gravity="center"
+                        android:textSize="14sp"
+                        android:textColor="#424242"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 2. SARAN PENGHEMATAN (DIPINDAH KE SINI) -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Saran Penghematan (AI)"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_marginBottom="12dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_rounded_white"
+                android:padding="16dp"
+                android:layout_marginBottom="24dp">
+
+                <!-- Item Saran 1 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="16dp">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_lightbulb_outline"
+                        app:tint="@color/energyOrange"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginStart="12dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Matikan AC jam 05:00"
+                            android:textStyle="bold"
+                            android:textColor="@color/black"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Suhu ruangan masih sejuk hingga jam 07:00 pagi. Hemat Rp 50.000/bln."
+                            android:textSize="12sp"
+                            android:textColor="#616161"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Item Saran 2 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_lightbulb_outline"
+                        app:tint="@color/mainBlue"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginStart="12dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Cabut Charger Laptop"
+                            android:textStyle="bold"
+                            android:textColor="@color/black"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Terdeteksi phantom load saat malam hari."
+                            android:textSize="12sp"
+                            android:textColor="#616161"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 3. CHATBOX ENTRY (FITUR BARU) -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Masih Bingung?"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_marginBottom="12dp"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_chat_ai"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:gravity="center_vertical">
+
+                    <!-- Icon Robot/Chat -->
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/ic_chat"
+                        app:tint="@color/primary_accent"
+                        android:background="@drawable/bg_circle_light_blue"
+                        android:padding="10dp"/>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tanya AI Assistant"
+                            android:textStyle="bold"
+                            android:textSize="16sp"
+                            android:textColor="@color/text_primary"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tanya tips spesifik atau analisis tagihanmu."
+                            android:textSize="12sp"
+                            android:textColor="@color/text_secondary"
+                            android:layout_marginTop="4dp"/>
+                    </LinearLayout>
+
+                    <!-- Arrow Icon -->
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_arrow_right"
+                        app:tint="@color/neutral_400"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

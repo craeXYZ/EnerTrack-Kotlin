@@ -1,0 +1,78 @@
+<resources>
+    <style name="Base.Theme.EnerTrack" parent="Theme.Material3.DayNight.NoActionBar">
+    </style>
+
+    <style name="Theme.EnerTrack" parent="Base.Theme.EnerTrack">
+        <!-- WARNA UTAMA -->
+        <!-- Menggunakan 'primary_accent' (#3B82F6) dari colors.xml -->
+        <item name="colorPrimary">@color/primary_accent</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <!-- Container bisa pakai soft blue atau card background -->
+        <item name="colorPrimaryContainer">@color/soft_blue_background</item>
+        <item name="colorOnPrimaryContainer">@color/text_primary</item>
+
+        <!-- WARNA SEKUNDER (Tetap Hijau atau ikut Biru) -->
+        <item name="colorSecondary">@color/primary_accent</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondaryContainer">@color/light_blue_gradient</item>
+        <item name="colorOnSecondaryContainer">@color/text_primary</item>
+
+        <!-- WARNA TERTIARY -->
+        <item name="colorTertiary">@color/primary_accent</item>
+        <item name="colorOnTertiary">@color/white</item>
+        <item name="colorTertiaryContainer">@color/soft_blue_background</item>
+
+        <!-- BACKGROUND & SURFACE -->
+        <item name="android:colorBackground">@color/main_background</item>
+        <item name="colorSurface">@color/card_background</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorSurfaceVariant">@color/main_background</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+
+
+        <!-- TEKS DEFAULT -->
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+
+        <!-- WARNA OUTLINE (Input Text, dll) -->
+        <item name="colorOutline">@color/text_disabled</item>
+        <item name="colorOutlineVariant">@color/neutral_200</item>
+    </style>
+
+    <!-- Style CardView Summary -->
+    <style name="Widget.EnerTrack.SummaryCard" parent="Widget.Material3.CardView.Filled">
+        <item name="cardBackgroundColor">@color/card_background</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.EnerTrack.Medium</item>
+    </style>
+
+    <!-- Style CardView History -->
+    <style name="Widget.EnerTrack.HistoryCard" parent="Widget.Material3.CardView.Filled">
+        <item name="cardBackgroundColor">@color/card_background</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.EnerTrack.Medium</item>
+    </style>
+
+    <style name="ShapeAppearance.EnerTrack.Medium" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <!-- TEXT STYLES (Diupdate ke warna baru) -->
+
+    <style name="TextAppearance.EnerTrack.Title" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_primary</item> <!-- Sebelumnya mirage -->
+    </style>
+
+    <style name="TextAppearance.EnerTrack.Body" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/text_primary</item> <!-- Sebelumnya mirage -->
+    </style>
+
+    <style name="TextAppearance.EnerTrack.Label" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/text_secondary</item> <!-- Sebelumnya neutral_500 -->
+    </style>
+
+</resources>
