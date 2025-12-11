@@ -9,6 +9,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
 
@@ -30,9 +31,15 @@ object RetrofitClient {
                 level = HttpLoggingInterceptor.Level.BODY
             }
 
+            // === BAGIAN INI SUDAH DIBERSIHKAN KEMBALI ===
+            // Default timeout OkHttp cuma 10 detik.
+            // AI butuh waktu mikir, jadi kita naikin jadi 60 detik (1 menit).
             val client = OkHttpClient.Builder()
                 .cookieJar(cookieJar!!)
                 .addInterceptor(loggingInterceptor)
+                .connectTimeout(30, TimeUnit.SECONDS) // Waktu maksimal buat nyambung ke server
+                .readTimeout(60, TimeUnit.SECONDS)    // Waktu maksimal nunggu jawaban AI (CRITICAL)
+                .writeTimeout(30, TimeUnit.SECONDS)   // Waktu maksimal kirim data
                 .build()
 
             val retrofit = Retrofit.Builder()
@@ -46,7 +53,6 @@ object RetrofitClient {
         return apiService!!
     }
 
-    // === PERBAIKAN DI SINI ===
     // Tambahkan parameter context untuk menghapus paksa penyimpanan lokal
     fun clearCookies(context: Context) {
         // 1. Bersihkan session di memori (kalau ada)
@@ -54,7 +60,6 @@ object RetrofitClient {
         cookieJar?.clearSession()
 
         // 2. HAPUS PAKSA penyimpanan di HP (Shared Preferences)
-        // Ini memastikan cookie hilang 100% walaupun apiService belum pernah dipanggil
         val persistor = SharedPrefsCookiePersistor(context.applicationContext)
         persistor.clear()
     }

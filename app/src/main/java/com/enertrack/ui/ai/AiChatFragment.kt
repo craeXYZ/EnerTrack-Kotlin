@@ -46,7 +46,8 @@ class AiChatFragment : Fragment() {
         observeViewModel()
 
         if (chatList.isEmpty()) {
-            addAiMessage("Halo! Saya siap bantu. Pilih perangkat di atas kalau mau tanya spesifik ya.")
+            // [TRANSLATED] Pesan pembuka
+            addAiMessage("Hello! I'm ready to help. Select a device above if you have specific questions.")
         }
     }
 
@@ -68,17 +69,18 @@ class AiChatFragment : Fragment() {
 
     // === SETUP SEARCHABLE DROPDOWN (AUTOCOMPLETE) ===
     private fun setupSearchableDropdown(options: List<DeviceOption>) {
-        // 1. FILTER: Hilangkan opsi "Umum" dari list dropdown
-        //    Jadi user cuma milih perangkat asli aja di list
-        val filteredOptions = options.filter { !it.label.contains("Umum", ignoreCase = true) }
+        // 1. FILTER: Hilangkan opsi "Umum" atau "General" dari list dropdown
+        val filteredOptions = options.filter {
+            !it.label.contains("Umum", ignoreCase = true) &&
+                    !it.label.contains("General", ignoreCase = true)
+        }
 
         val labels = filteredOptions.map { it.label }
 
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, labels)
         binding.dropdownDeviceSelect.setAdapter(adapter)
 
-        // 2. STATE AWAL: Kosongkan teks
-        //    Ini bikin "Hint" (Pilih Perangkat) dari XML yang muncul sebagai label yang rapi.
+        // 2. STATE AWAL: Kosongkan teks biar Hint dari XML yang muncul
         binding.dropdownDeviceSelect.setText("", false)
         currentSelectedContext = "" // Context default (kosong = umum)
 
@@ -118,9 +120,11 @@ class AiChatFragment : Fragment() {
     }
 
     private fun setupChipListeners() {
-        binding.chipBoros.setOnClickListener { sendMessage("Apakah penggunaan perangkat ini tergolong boros?") }
-        binding.chipTips.setOnClickListener { sendMessage("Berikan tips hemat untuk perangkat ini") }
-        binding.chipCost.setOnClickListener { sendMessage("Berapa estimasi biaya per bulan?") }
+        // [TRANSLATED] Pesan otomatis saat chip diklik
+        // Text ini yang akan muncul di bubble chat user dan dikirim ke AI
+        binding.chipBoros.setOnClickListener { sendMessage("Is this device usage considered wasteful?") }
+        binding.chipTips.setOnClickListener { sendMessage("Give me energy saving tips for this device") }
+        binding.chipCost.setOnClickListener { sendMessage("What is the estimated monthly cost?") }
     }
 
     private fun sendMessage(text: String) {

@@ -27,11 +27,17 @@
             android:textStyle="bold"
             android:textColor="@color/black"/>
 
+        <!-- ID PENTING: btnRefresh -->
         <ImageView
+            android:id="@+id/btnRefresh"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/ic_home"
-            app:tint="#BDBDBD"/>
+            android:src="@drawable/ic_refresh"
+            app:tint="#BDBDBD"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            tools:ignore="ContentDescription"/>
     </LinearLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -47,7 +53,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- 1. CARD RATING (TETAP DI ATAS) -->
+            <!-- 1. CARD GRADE / RATING -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -65,42 +71,51 @@
                     android:padding="20dp"
                     android:gravity="center">
 
+                    <!-- ID PENTING: tvSubtitle -->
                     <TextView
+                        android:id="@+id/tvSubtitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Efisiensi Energi Bulan Ini"
+                        android:text="Monthly Energy Efficiency"
                         android:textColor="#757575"
                         android:textSize="14sp"/>
 
+                    <!-- ID PENTING: tvGrade -->
                     <TextView
+                        android:id="@+id/tvGrade"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="B+"
-                        android:textSize="48sp"
+                        android:text="-"
+                        android:textSize="56sp"
                         android:textStyle="bold"
-                        android:textColor="@color/energyGreen"
+                        android:textColor="#BDBDBD"
                         android:layout_marginVertical="8dp"/>
 
+                    <!-- ID PENTING: tvGradeMessage -->
                     <TextView
+                        android:id="@+id/tvGradeMessage"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Hebat! Pemakaianmu lebih hemat 15% dibanding rata-rata tetangga."
+                        android:text="Loading analysis..."
                         android:gravity="center"
                         android:textSize="14sp"
                         android:textColor="#424242"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- 2. SARAN PENGHEMATAN (DIPINDAH KE SINI) -->
+            <!-- 2. AI SUGGESTIONS -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Saran Penghematan (AI)"
+                android:text="Smart Suggestions (AI)"
                 android:textStyle="bold"
                 android:textSize="16sp"
+                android:textColor="@color/black"
                 android:layout_marginBottom="12dp"/>
 
+            <!-- ID PENTING: layoutTipsContainer -->
             <LinearLayout
+                android:id="@+id/layoutTipsContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -108,75 +123,22 @@
                 android:padding="16dp"
                 android:layout_marginBottom="24dp">
 
-                <!-- Item Saran 1 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <!-- Tips akan masuk ke sini otomatis -->
+                <ProgressBar
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="16dp">
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_lightbulb_outline"
-                        app:tint="@color/energyOrange"/>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginStart="12dp">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Matikan AC jam 05:00"
-                            android:textStyle="bold"
-                            android:textColor="@color/black"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Suhu ruangan masih sejuk hingga jam 07:00 pagi. Hemat Rp 50.000/bln."
-                            android:textSize="12sp"
-                            android:textColor="#616161"/>
-                    </LinearLayout>
-                </LinearLayout>
+                    android:layout_gravity="center"/>
 
-                <!-- Item Saran 2 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_lightbulb_outline"
-                        app:tint="@color/mainBlue"/>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginStart="12dp">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Cabut Charger Laptop"
-                            android:textStyle="bold"
-                            android:textColor="@color/black"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Terdeteksi phantom load saat malam hari."
-                            android:textSize="12sp"
-                            android:textColor="#616161"/>
-                    </LinearLayout>
-                </LinearLayout>
             </LinearLayout>
 
-            <!-- 3. CHATBOX ENTRY (FITUR BARU) -->
+            <!-- 3. CHATBOX LINK -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Masih Bingung?"
+                android:text="Need More Help?"
                 android:textStyle="bold"
                 android:textSize="16sp"
+                android:textColor="@color/black"
                 android:layout_marginBottom="12dp"/>
 
             <com.google.android.material.card.MaterialCardView
@@ -196,14 +158,14 @@
                     android:padding="16dp"
                     android:gravity="center_vertical">
 
-                    <!-- Icon Robot/Chat -->
                     <ImageView
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:src="@drawable/ic_chat"
                         app:tint="@color/primary_accent"
                         android:background="@drawable/bg_circle_light_blue"
-                        android:padding="10dp"/>
+                        android:padding="10dp"
+                        tools:ignore="ContentDescription"/>
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -215,7 +177,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Tanya AI Assistant"
+                            android:text="Ask AI Assistant"
                             android:textStyle="bold"
                             android:textSize="16sp"
                             android:textColor="@color/text_primary"/>
@@ -223,18 +185,18 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Tanya tips spesifik atau analisis tagihanmu."
+                            android:text="Ask for specific tips or bill analysis."
                             android:textSize="12sp"
                             android:textColor="@color/text_secondary"
                             android:layout_marginTop="4dp"/>
                     </LinearLayout>
 
-                    <!-- Arrow Icon -->
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_arrow_right"
-                        app:tint="@color/neutral_400"/>
+                        app:tint="@color/neutral_400"
+                        tools:ignore="ContentDescription"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

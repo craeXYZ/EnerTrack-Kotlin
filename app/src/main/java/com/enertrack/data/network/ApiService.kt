@@ -74,4 +74,7 @@ interface ApiService {
     @POST("api/chat")
     suspend fun sendChat(@Body request: ChatRequest): Response<ChatResponse>
 
+    @GET("api/insight")
+    suspend fun getInsight(): Response<InsightResponse>
+
 }

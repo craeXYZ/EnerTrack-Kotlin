@@ -44,8 +44,7 @@
             android:layout_marginStart="12dp"/>
     </LinearLayout>
 
-    <!-- === DROPDOWN MATERIAL DESIGN (PILIH SAJA) === -->
-    <!-- Style ini yang bikin kotak garis tepi (Outline) -->
+    <!-- === DROPDOWN MATERIAL DESIGN === -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/layout_device_select"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -53,10 +52,8 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="16dp"
-        android:hint="Pilih Perangkat">
+        android:hint="Select Device">
 
-        <!-- inputType="none" -> Biar keyboard GAK MUNCUL (Cuma bisa pilih) -->
-        <!-- dropDownHeight="250dp" -> Biar listnya PENDEK (Scrollable) -->
         <AutoCompleteTextView
             android:id="@+id/dropdown_device_select"
             android:layout_width="match_parent"
@@ -64,7 +61,7 @@
             android:inputType="none"
             android:padding="12dp"
             android:textSize="14sp"
-            android:text="Pilih Perangkat (Umum)"
+            android:text="Select Device (General)"
             android:dropDownHeight="250dp"/>
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -78,7 +75,7 @@
         android:padding="16dp"
         android:clipToPadding="false"/>
 
-    <!-- Chips (Tombol Cepat) -->
+    <!-- Chips (Quick Action Buttons) -->
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -99,7 +96,7 @@
                 style="@style/Widget.MaterialComponents.Chip.Action"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="💸 Apakah ini boros?"
+                android:text="💸 Is this wasteful?"
                 android:textColor="@android:color/black"
                 app:chipBackgroundColor="@android:color/white"
                 app:chipStrokeColor="#E0E0E0"
@@ -110,7 +107,7 @@
                 style="@style/Widget.MaterialComponents.Chip.Action"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="💡 Tips Hemat"
+                android:text="💡 Energy Saving Tips"
                 android:textColor="@android:color/black"
                 app:chipBackgroundColor="@android:color/white"
                 app:chipStrokeColor="#E0E0E0"
@@ -121,7 +118,7 @@
                 style="@style/Widget.MaterialComponents.Chip.Action"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="💰 Estimasi Biaya"
+                android:text="💰 Cost Estimation"
                 android:textColor="@android:color/black"
                 app:chipBackgroundColor="@android:color/white"
                 app:chipStrokeColor="#E0E0E0"
@@ -130,7 +127,7 @@
         </com.google.android.material.chip.ChipGroup>
     </HorizontalScrollView>
 
-    <!-- Input Area (Ketik Pesan) -->
+    <!-- Input Area -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -145,7 +142,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Tanya spesifik..."
+            android:hint="Ask something specific..."
             android:background="@drawable/bg_rounded_gray"
             android:padding="12dp"
             android:textSize="14sp"
