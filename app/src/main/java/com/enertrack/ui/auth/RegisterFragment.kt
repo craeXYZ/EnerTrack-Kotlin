@@ -40,7 +40,8 @@ class RegisterFragment : Fragment() {
             val pass = binding.etPassword.text.toString().trim()
 
             if (name.isEmpty() || email.isEmpty() || pass.isEmpty()) {
-                Toast.makeText(requireContext(), "Mohon isi semua data", Toast.LENGTH_SHORT).show()
+                // UPDATE: Changed to English
+                Toast.makeText(requireContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -61,7 +62,8 @@ class RegisterFragment : Fragment() {
                 }
                 is UIState.Success -> {
                     binding.progressBar.isVisible = false
-                    Toast.makeText(requireContext(), "Registrasi berhasil! Silakan login.", Toast.LENGTH_LONG).show()
+                    // UPDATE: Changed to English
+                    Toast.makeText(requireContext(), "Registration successful! Please login.", Toast.LENGTH_LONG).show()
                     findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
                 }
                 is UIState.Error -> {

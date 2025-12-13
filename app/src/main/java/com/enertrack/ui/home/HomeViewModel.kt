@@ -32,15 +32,24 @@ class HomeViewModel(
     val weeklyChartData: LiveData<UIState<List<ChartDataPoint>>> = _weeklyChartData
 
     init {
-        observeHistoryDatabase()
+        // === PERUBAHAN PENTING ===
+        // Jangan langsung observe DB di sini!
+        // observeHistoryDatabase() <-- HAPUS / PINDAHKAN
+
         checkSessionAndFetchData()
     }
 
     private fun checkSessionAndFetchData() {
         viewModelScope.launch {
             try {
+                // Tunggu sampai ada user yang valid
                 val user = sessionManager.usernameFlow.first { !it.isNullOrBlank() }
                 Log.d("HomeViewModel", "Session ready for user: $user. Fetching data...")
+
+                // === BARU ===
+                // Setelah user valid, baru kita mulai dengerin database & ambil data baru
+                // Ini mencegah data "hantu" muncul sebelum kita tau siapa usernya
+                observeHistoryDatabase()
                 onRefresh()
             } catch (e: Exception) {
                 Log.e("HomeViewModel", "Failed to get session before refresh", e)
@@ -67,6 +76,9 @@ class HomeViewModel(
     private fun observeHistoryDatabase() {
         viewModelScope.launch {
             historyRepository.getHistoryList().collectLatest { items ->
+                // Walaupun datanya dari user lama, minimal kita baru nampilin sekarang.
+                // Kalo syncFromServer jalan cepet, user lama bakal ketimpa user baru.
+
                 if (items.isNotEmpty()) {
                     val latestDate = items.first().date
                     val latestSubmissionItems = items.filter { it.date == latestDate }
@@ -75,13 +87,10 @@ class HomeViewModel(
                     val tarifPerKwh = 1444.70
 
                     latestSubmissionItems.forEach { item ->
-                        // ================== PERBAIKAN ERROR DI SINI ==================
-                        // Kasih default 0.0 kalo datanya null
                         val power = item.power ?: 0.0
                         val usage = item.usage ?: 0.0
                         val calculatedDailyKwh = (power * usage) / 1000.0
                         totalDaily += calculatedDailyKwh
-                        // =============================================================
                     }
 
                     val totalWeekly = totalDaily * 7
@@ -120,4 +129,3 @@ class HomeViewModel(
         recentHistory.value = emptyList()
     }
 }
-

@@ -1,23 +1,22 @@
 package com.enertrack.ui.calculate
 
 import androidx.lifecycle.*
-import com.enertrack.data.model.*
+import com.enertrack.data.model.* // Import SubmitPayload, DevicePayload, Appliance, IotDevice
 import com.enertrack.data.repository.CalculateRepository
 import com.enertrack.data.repository.HistoryRepository
 import com.enertrack.data.repository.Result
 import com.enertrack.data.repository.onFailure
 import com.enertrack.data.repository.onSuccess
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.Job
-import kotlin.random.Random
 
 class CalculateViewModel(
     private val calculateRepository: CalculateRepository,
     private val historyRepository: HistoryRepository
 ) : ViewModel() {
 
+    // --- MANUAL CALC DATA ---
     private val _applianceList = MutableLiveData<List<Appliance>>(emptyList())
     val applianceList: LiveData<List<Appliance>> = _applianceList
 
@@ -36,26 +35,22 @@ class CalculateViewModel(
 
     private var categoriesMap: Map<Int, String> = emptyMap()
 
-    // === IOT SIMULATION DATA ===
-    private val _iotVoltage = MutableLiveData<Double>()
-    val iotVoltage: LiveData<Double> = _iotVoltage
+    // --- REALTIME IoT DATA (FIRESTORE) ---
+    // Kita pakai ini menggantikan simulasi lama kamu biar datanya asli
+    private val db = Firebase.firestore
 
-    private val _iotCurrent = MutableLiveData<Double>()
-    val iotCurrent: LiveData<Double> = _iotCurrent
+    private val _iotDevicesList = MutableLiveData<List<IotDevice>>()
+    val iotDevicesList: LiveData<List<IotDevice>> = _iotDevicesList
 
-    private val _iotPower = MutableLiveData<Int>()
-    val iotPower: LiveData<Int> = _iotPower
-
-    private val _iotStatus = MutableLiveData<String>()
-    val iotStatus: LiveData<String> = _iotStatus
-
-    private var simulationJob: Job? = null
+    private val _selectedIotDevice = MutableLiveData<IotDevice?>()
+    val selectedIotDevice: LiveData<IotDevice?> = _selectedIotDevice
 
     init {
         fetchCategoriesMap()
-        startIoTSimulation()
+        startRealtimeMonitoring() // Panggil fungsi Firestore, bukan startIoTSimulation
     }
 
+    // --- FUNGSI HELPER MANUAL ---
     private fun getTariff(capacity: String?): Double {
         val capClean = capacity?.replace(" VA", "")?.replace(".", "") ?: "0"
         return when (capClean) {
@@ -76,9 +71,7 @@ class CalculateViewModel(
 
     fun fetchBrands() {
         viewModelScope.launch {
-            calculateRepository.getBrands().onSuccess { data ->
-                _brandOptions.value = data
-            }
+            calculateRepository.getBrands().onSuccess { data -> _brandOptions.value = data }
         }
     }
 
@@ -95,19 +88,11 @@ class CalculateViewModel(
 
     fun fetchDevicesByBrand(brand: String) {
         viewModelScope.launch {
-            calculateRepository.getDevicesByBrand(brand).onSuccess { data ->
-                _deviceOptionsForBrand.value = data
-            }.onFailure {
-                _deviceOptionsForBrand.value = emptyList()
-            }
+            calculateRepository.getDevicesByBrand(brand).onSuccess { data -> _deviceOptionsForBrand.value = data }
         }
     }
 
-    fun addOrUpdateAppliance(
-        name: String, brand: String, category: String?,
-        powerStr: String, usageStr: String, qtyStr: String,
-        categoryIdFromDevice: Int? = null
-    ) {
+    fun addOrUpdateAppliance(name: String, brand: String, category: String?, powerStr: String, usageStr: String, qtyStr: String, categoryIdFromDevice: Int? = null) {
         val powerRating = powerStr.toDoubleOrNull() ?: 0.0
         val dailyUsage = usageStr.toDoubleOrNull() ?: 0.0
         if (dailyUsage <= 0) return
@@ -118,7 +103,7 @@ class CalculateViewModel(
         val currentId = System.currentTimeMillis()
 
         val finalCategoryId = categoryIdFromDevice ?: 1
-        val finalCategoryName = categoriesMap[finalCategoryId] ?: "Elektronik"
+        val finalCategoryName = categoriesMap[finalCategoryId] ?: "Electronics" // UPDATE: English Text
 
         val newAppliance = Appliance(
             id = currentId,
@@ -137,8 +122,9 @@ class CalculateViewModel(
             monthlyCost = dailyCost * 30
         )
 
-        val newList = listOf(newAppliance)
-        _applianceList.value = newList
+        val currentList = _applianceList.value.orEmpty().toMutableList()
+        currentList.add(newAppliance)
+        _applianceList.value = currentList
     }
 
     fun deleteAppliance(id: Long) {
@@ -146,12 +132,14 @@ class CalculateViewModel(
         _applianceList.value = currentList.filter { it.id != id }
     }
 
+    // --- FUNGSI SUBMIT (MENGGUNAKAN LOGIKA LAMA YANG BENAR) ---
     fun submitDeviceList(houseCapacity: String, billingType: String) {
         val list = _applianceList.value
         if (list.isNullOrEmpty()) return
 
         val capacityValue = houseCapacity.replace(" VA", "").replace(".", "").toDoubleOrNull() ?: 0.0
 
+        // 1. Mapping menggunakan DevicePayload (Bukan 'Device' buatan saya tadi)
         val devicePayloadList = list.map { appliance ->
             DevicePayload(
                 billingType = billingType,
@@ -165,15 +153,19 @@ class CalculateViewModel(
             )
         }
 
+        // 2. Bungkus menggunakan SubmitPayload (Bukan 'UserInput')
+        // Struktur ini yang dimengerti oleh Repository kamu
         val payload = SubmitPayload(
             billingtype = billingType,
             electricity = mapOf("capacity" to capacityValue),
             devices = devicePayloadList
         )
 
+        // 3. Kirim ke Repository
         viewModelScope.launch {
             calculateRepository.submitDevices(payload).onSuccess { data ->
                 _submissionStatus.value = Result.Success(data)
+                // UPDATE: Kosongkan list setelah sukses (Fitur Reset)
                 _applianceList.value = emptyList()
             }.onFailure { e ->
                 _submissionStatus.value = Result.Failure(e)
@@ -181,35 +173,48 @@ class CalculateViewModel(
         }
     }
 
-    // === IOT SIMULATION LOGIC ===
-    private fun startIoTSimulation() {
-        simulationJob?.cancel()
-        simulationJob = viewModelScope.launch {
-            _iotStatus.postValue("Connected")
-            while (isActive) {
-                val randomVoltage = 220.0 + Random.nextDouble(-5.0, 5.0)
-                _iotVoltage.postValue(randomVoltage)
 
-                val randomPower = Random.nextInt(400, 550)
-                _iotPower.postValue(randomPower)
+    // === REALTIME MONITORING FUNCTION (DARI KODE BARU) ===
+    fun startRealtimeMonitoring() {
+        val currentUserId = 11 // TODO: Nanti ambil dari User Session asli
 
-                val calculatedCurrent = randomPower / randomVoltage
-                _iotCurrent.postValue(calculatedCurrent)
+        db.collection("monitoring_live")
+            .whereEqualTo("user_id", currentUserId)
+            .addSnapshotListener { snapshots, e ->
+                if (e != null) {
+                    return@addSnapshotListener
+                }
 
-                delay(3000)
+                if (snapshots != null && !snapshots.isEmpty) {
+                    val devices = ArrayList<IotDevice>()
+                    for (doc in snapshots.documents) {
+                        // Pastikan IotDevice punya empty constructor di data model
+                        val device = doc.toObject(IotDevice::class.java)?.copy(docId = doc.id)
+                        if (device != null) {
+                            devices.add(device)
+                        }
+                    }
+                    _iotDevicesList.value = devices
+
+                    // Update detail view jika sedang dibuka
+                    val currentSelection = _selectedIotDevice.value
+                    if (currentSelection != null) {
+                        val updatedDevice = devices.find { it.docId == currentSelection.docId }
+                        if (updatedDevice != null) {
+                            _selectedIotDevice.value = updatedDevice
+                        }
+                    }
+                } else {
+                    _iotDevicesList.value = emptyList()
+                }
             }
-        }
     }
 
-    fun refreshIoTConnection() {
-        viewModelScope.launch {
-            simulationJob?.cancel()
-            _iotStatus.value = "Connecting..."
-            _iotPower.value = 0
-            _iotVoltage.value = 0.0
-            _iotCurrent.value = 0.0
-            delay(2000)
-            startIoTSimulation()
-        }
+    fun selectDevice(device: IotDevice) {
+        _selectedIotDevice.value = device
+    }
+
+    fun clearSelection() {
+        _selectedIotDevice.value = null
     }
 }

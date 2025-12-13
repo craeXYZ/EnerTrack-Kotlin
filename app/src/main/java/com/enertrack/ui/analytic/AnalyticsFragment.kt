@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -30,18 +29,28 @@ class AnalyticsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Setup Swipe Refresh
+        binding.swipeRefreshAnalytics.setOnRefreshListener {
+            viewModel.fetchAllStatistics()
+        }
+
         observeViewModel()
         viewModel.fetchAllStatistics()
     }
 
     private fun observeViewModel() {
-        // === 1. WEEKLY CHART (REAL DATA ONLY) ===
+        // === 1. WEEKLY CHART ===
         viewModel.weeklyStats.observe(viewLifecycleOwner) { state ->
+            // Matikan loading refresh kalau data udah masuk
+            if (state !is UIState.Loading) {
+                binding.swipeRefreshAnalytics.isRefreshing = false
+            }
+
             binding.progressBarWeekly.isVisible = state is UIState.Loading
 
             if (state is UIState.Success) {
                 val data = state.data
-                // Cek apakah data ada isinya dan nilainya lebih dari 0
                 val hasRealData = data.isNotEmpty() && data.any { it.value > 0.0 }
 
                 if (hasRealData) {
@@ -59,7 +68,7 @@ class AnalyticsFragment : Fragment() {
             }
         }
 
-        // === 2. MONTHLY CHART (REAL DATA ONLY) ===
+        // === 2. MONTHLY CHART ===
         viewModel.monthlyStats.observe(viewLifecycleOwner) { state ->
             binding.progressBarMonthly.isVisible = state is UIState.Loading
 
@@ -99,10 +108,7 @@ class AnalyticsFragment : Fragment() {
 
     private fun setupMonthlyChart(data: List<ChartDataPoint>) {
         try {
-            // === UPDATE: HANYA AMBIL 4 MINGGU PERTAMA ===
-            // Backend mungkin kirim 5, tapi kita cuma mau nampilin 4.
             val limitedData = data.take(4)
-
             val chartData = linkedMapOf<String, Float>()
             limitedData.forEach { dataPoint ->
                 chartData[dataPoint.label] = dataPoint.value.toFloat()

@@ -13,7 +13,8 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
 
-    private const val BASE_URL = "https://project-enertrack-backend-production.up.railway.app/"
+    // PERBAIKAN: Hapus trailing slash (/) di akhir BASE_URL
+    private const val BASE_URL = "https://project-enertrack-backend-production.up.railway.app"
 
     private var apiService: ApiService? = null
 
@@ -31,14 +32,13 @@ object RetrofitClient {
                 level = HttpLoggingInterceptor.Level.BODY
             }
 
-            // === BAGIAN INI SUDAH DIBERSIHKAN KEMBALI ===
             // Default timeout OkHttp cuma 10 detik.
             // AI butuh waktu mikir, jadi kita naikin jadi 60 detik (1 menit).
             val client = OkHttpClient.Builder()
                 .cookieJar(cookieJar!!)
                 .addInterceptor(loggingInterceptor)
                 .connectTimeout(30, TimeUnit.SECONDS) // Waktu maksimal buat nyambung ke server
-                .readTimeout(60, TimeUnit.SECONDS)    // Waktu maksimal nunggu jawaban AI (CRITICAL)
+                .readTimeout(60, TimeUnit.SECONDS)    // Waktu maksimal nunggu jawaban AI
                 .writeTimeout(30, TimeUnit.SECONDS)   // Waktu maksimal kirim data
                 .build()
 
@@ -53,13 +53,15 @@ object RetrofitClient {
         return apiService!!
     }
 
+    // === UPDATED: Fungsi Hapus Cookie Total ===
     // Tambahkan parameter context untuk menghapus paksa penyimpanan lokal
     fun clearCookies(context: Context) {
-        // 1. Bersihkan session di memori (kalau ada)
+        // 1. Bersihkan session di memori (variable cookieJar di atas)
         cookieJar?.clear()
         cookieJar?.clearSession()
 
         // 2. HAPUS PAKSA penyimpanan di HP (Shared Preferences)
+        // Ini langkah krusial untuk HP fisik agar tidak auto-login akun lama
         val persistor = SharedPrefsCookiePersistor(context.applicationContext)
         persistor.clear()
     }

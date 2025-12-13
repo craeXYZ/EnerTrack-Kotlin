@@ -1,95 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- MENGGUNAKAN CardView KLASIK (AndroidX) -->
+<!-- Komponen ini tidak akan terkena efek 'Blue Tint' dari Material 3 -->
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp">
-
-    <TextView
-        android:id="@+id/tv_detail_appliance_name"
-        style="@style/TextAppearance.Material3.TitleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="Cooler" />
-
-    <TextView
-        android:id="@+id/tv_detail_date"
-        style="@style/TextAppearance.Material3.BodySmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        tools:text="2025-06-24" />
-
-    <TextView
-        android:id="@+id/tv_detail_brand"
-        style="@style/TextAppearance.Material3.BodyMedium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="Brand: Cooler Master" />
-
-    <com.google.android.material.chip.Chip
-        android:id="@+id/chip_detail_category"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        tools:text="Cooling" />
-
-    <GridLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:columnCount="2"
-        android:rowCount="3">
-
-        <TextView android:text="Power (W)" style="@style/TextAppearance.Material3.LabelMedium" android:layout_gravity="start"/>
-        <TextView android:id="@+id/tv_detail_power" tools:text="120" style="@style/TextAppearance.Material3.TitleMedium" android:layout_gravity="end"/>
-
-        <TextView android:text="Usage (hrs)" style="@style/TextAppearance.Material3.LabelMedium" android:layout_gravity="start" android:layout_marginTop="8dp"/>
-        <TextView android:id="@+id/tv_detail_usage" tools:text="7" style="@style/TextAppearance.Material3.TitleMedium" android:layout_gravity="end" android:layout_marginTop="8dp"/>
-
-        <TextView android:text="Daily (kWh)" style="@style/TextAppearance.Material3.LabelMedium" android:layout_gravity="start" android:layout_marginTop="8dp"/>
-        <TextView android:id="@+id/tv_detail_daily_kwh" tools:text="0.84" style="@style/TextAppearance.Material3.TitleMedium" android:layout_gravity="end" android:layout_marginTop="8dp"/>
-
-        <TextView android:text="Monthly (kWh)" style="@style/TextAppearance.Material3.LabelMedium" android:layout_gravity="start" android:layout_marginTop="8dp"/>
-        <TextView android:id="@+id/tv_detail_monthly_kwh" tools:text="25.20" style="@style/TextAppearance.Material3.TitleMedium" android:layout_gravity="end" android:layout_marginTop="8dp"/>
-    </GridLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="?attr/dividerHorizontal"
-        android:layout_marginVertical="16dp"/>
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Title -->
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="COST"
-            style="@style/TextAppearance.Material3.TitleMedium"
-            android:layout_weight="1"/>
-        <TextView
-            android:id="@+id/tv_detail_cost"
+            android:id="@+id/tv_detail_appliance_name"
+            style="@style/TextAppearance.Material3.TitleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="Rp 1.214"
-            style="@style/TextAppearance.Material3.TitleLarge"
-            android:textColor="?attr/colorPrimary"/>
+            tools:text="Cooler" />
+
+        <!-- Date -->
+        <TextView
+            android:id="@+id/tv_detail_date"
+            style="@style/TextAppearance.Material3.BodySmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            tools:text="2025-06-24" />
+
+        <!-- Brand -->
+        <TextView
+            android:id="@+id/tv_detail_brand"
+            style="@style/TextAppearance.Material3.BodyMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Brand: Cooler Master" />
+
+        <!-- Details Grid -->
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:columnCount="2"
+            android:rowCount="3">
+
+            <TextView android:text="Power (W)" style="@style/TextAppearance.Material3.LabelMedium" android:layout_gravity="start"/>
+            <TextView android:id="@+id/tv_detail_power" tools:text="120" style="@style/TextAppearance.Material3.TitleMedium" android:layout_gravity="end"/>
+
+            <TextView android:text="Usage (hrs)" style="@style/TextAppearance.Material3.LabelMedium" android:layout_gravity="start" android:layout_marginTop="8dp"/>
+            <TextView android:id="@+id/tv_detail_usage" tools:text="7" style="@style/TextAppearance.Material3.TitleMedium" android:layout_gravity="end" android:layout_marginTop="8dp"/>
+
+            <TextView android:text="Daily (kWh)" style="@style/TextAppearance.Material3.LabelMedium" android:layout_gravity="start" android:layout_marginTop="8dp"/>
+            <TextView android:id="@+id/tv_detail_daily_kwh" tools:text="0.84" style="@style/TextAppearance.Material3.TitleMedium" android:layout_gravity="end" android:layout_marginTop="8dp"/>
+
+            <TextView android:text="Monthly (kWh)" style="@style/TextAppearance.Material3.LabelMedium" android:layout_gravity="start" android:layout_marginTop="8dp"/>
+            <TextView android:id="@+id/tv_detail_monthly_kwh" tools:text="25.20" style="@style/TextAppearance.Material3.TitleMedium" android:layout_gravity="end" android:layout_marginTop="8dp"/>
+        </GridLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/neutral_200"
+            android:layout_marginVertical="16dp"/>
+
+        <!-- Cost Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="COST"
+                style="@style/TextAppearance.Material3.TitleMedium"
+                android:layout_weight="1"/>
+            <TextView
+                android:id="@+id/tv_detail_cost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Rp 1.214"
+                style="@style/TextAppearance.Material3.TitleLarge"
+                android:textColor="@color/primary_accent"/>
+        </LinearLayout>
+
+        <!-- Delete Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_delete_history"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Delete this record"
+            app:icon="@drawable/ic_trash"
+            android:textColor="@color/dangerRed"
+            app:strokeColor="@color/dangerRed"
+            app:iconTint="@color/dangerRed"
+            android:layout_marginTop="24dp"/>
+
     </LinearLayout>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_delete_history"
-        style="@style/Widget.Material3.Button.OutlinedButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Delete this record"
-        app:icon="@drawable/ic_trash"
-        android:textColor="?attr/colorError"
-        app:strokeColor="?attr/colorError"
-        app:iconTint="?attr/colorError"
-        android:layout_marginTop="24dp"/>
-
-</LinearLayout>
+</androidx.cardview.widget.CardView>

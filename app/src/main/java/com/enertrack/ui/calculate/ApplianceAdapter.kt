@@ -33,7 +33,7 @@ class ApplianceAdapter(
             binding.tvDeviceName.text = item.name
 
             // Format detail: "120 Watt • 5 Jam/hari"
-            binding.tvDeviceDetails.text = "${item.powerRating} Watt • ${item.dailyUsage} Jam/hari"
+            binding.tvDeviceDetails.text = "${item.powerRating} Watt • ${item.dailyUsage} Hours/day"
 
             val currencyFormat = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
             currencyFormat.maximumFractionDigits = 0

@@ -48,7 +48,10 @@ class HistoryDetailBottomSheet : BottomSheetDialogFragment() {
         binding.tvDetailApplianceName.text = item.appliance ?: "N/A"
         binding.tvDetailDate.text = item.date ?: "N/A"
         binding.tvDetailBrand.text = "Brand: ${item.applianceDetails ?: "N/A"}"
-        binding.chipDetailCategory.text = item.categoryName ?: "N/A"
+
+        // [DIBUANG] Baris kategori dihapus karena Chip-nya udah gak ada di XML
+        // binding.chipDetailCategory.text = item.categoryName ?: "N/A"
+
         binding.tvDetailPower.text = (item.power ?: 0.0).toString()
         binding.tvDetailUsage.text = (item.usage ?: 0.0).toString()
         binding.tvDetailDailyKwh.text = String.format("%.2f", dailyKwh)

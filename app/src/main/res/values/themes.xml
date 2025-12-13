@@ -9,7 +9,7 @@
         <item name="colorOnPrimary">@color/white</item>
 
         <!-- Container bisa pakai soft blue atau card background -->
-        <item name="colorPrimaryContainer">@color/soft_blue_background</item>
+        <item name="colorPrimaryContainer">@color/white</item>
         <item name="colorOnPrimaryContainer">@color/text_primary</item>
 
         <!-- WARNA SEKUNDER (Tetap Hijau atau ikut Biru) -->
@@ -21,7 +21,7 @@
         <!-- WARNA TERTIARY -->
         <item name="colorTertiary">@color/primary_accent</item>
         <item name="colorOnTertiary">@color/white</item>
-        <item name="colorTertiaryContainer">@color/soft_blue_background</item>
+        <item name="colorTertiaryContainer">@color/white</item>
 
         <!-- BACKGROUND & SURFACE -->
         <item name="android:colorBackground">@color/main_background</item>

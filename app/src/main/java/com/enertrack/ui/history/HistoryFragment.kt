@@ -10,10 +10,10 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager // <-- Pastikan import ini ada
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.enertrack.data.model.HistoryItem
 import com.enertrack.databinding.FragmentHistoryBinding
-import com.google.android.material.chip.Chip
+// import com.google.android.material.chip.Chip  <-- Hapus import ini karena Chip sudah dibuang
 
 class HistoryFragment : Fragment() {
 
@@ -33,7 +33,7 @@ class HistoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
-        setupFilters()
+        setupFilters() // Isinya sekarang cuma Search
         setupPagination()
         setupListeners()
         observeViewModel()
@@ -49,14 +49,10 @@ class HistoryFragment : Fragment() {
             detailSheet.show(parentFragmentManager, HistoryDetailBottomSheet.TAG)
         }
 
-        // ================== PERBAIKAN UTAMA DI SINI ==================
         binding.recyclerViewHistory.apply {
-            // Pasang "rak"-nya (LayoutManager) di sini
             layoutManager = LinearLayoutManager(requireContext())
-            // Pasang "forklift"-nya (Adapter)
             adapter = historyAdapter
         }
-        // =============================================================
     }
 
     private fun showDeleteConfirmationDialog(item: HistoryItem) {
@@ -73,29 +69,17 @@ class HistoryFragment : Fragment() {
             .show()
     }
 
+    // === BAGIAN INI YANG DIPERBAIKI ===
     private fun setupFilters() {
+        // Cuma sisa listener Search aja. Logika Chip Kategori SUDAH DIHAPUS.
         binding.etSearch.addTextChangedListener { text ->
             viewModel.searchQuery.value = text.toString()
         }
-        val categories = listOf("All", "Entertainment", "Cooling", "Health", "Lighting", "Kitchen", "Heating")
-        binding.chipGroupCategories.isSingleSelection = true
-        categories.forEach { categoryName ->
-            val chip = Chip(context).apply {
-                text = categoryName
-                isCheckable = true
-                isChecked = categoryName == "All"
-            }
-            binding.chipGroupCategories.addView(chip)
-        }
-        binding.chipGroupCategories.setOnCheckedStateChangeListener { group, checkedIds ->
-            if (checkedIds.isNotEmpty()) {
-                val chip = group.findViewById<Chip>(checkedIds.first())
-                viewModel.selectedCategory.value = chip.text.toString()
-            } else {
-                viewModel.selectedCategory.value = "All"
-            }
-        }
+
+        // Reset kategori ke "All" secara default karena tombol filternya udah gak ada
+        viewModel.selectedCategory.value = "All"
     }
+    // ==================================
 
     private fun setupPagination() {
         binding.btnNext.setOnClickListener { viewModel.goToNextPage() }
@@ -122,6 +106,7 @@ class HistoryFragment : Fragment() {
 
         viewModel.paginatedHistoryList.observe(viewLifecycleOwner) { list ->
             historyAdapter.submitList(list)
+            // Tampilkan pesan kosong hanya jika list kosong DAN tidak sedang loading
             binding.tvEmptyData.isVisible = list.isEmpty() && viewModel.isLoading.value == false
         }
 

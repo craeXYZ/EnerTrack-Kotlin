@@ -44,7 +44,8 @@ class LoginFragment : Fragment() {
             val pass = binding.etPassword.text.toString().trim()
 
             if (email.isEmpty() || pass.isEmpty()) {
-                Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show()
+                // UPDATE: Minor fix to make it "fill IN all fields"
+                Toast.makeText(requireContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 

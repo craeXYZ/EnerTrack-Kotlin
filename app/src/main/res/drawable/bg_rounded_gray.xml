@@ -3,7 +3,7 @@
     android:shape="rectangle">
 
     <!-- Warna background putih -->
-    <solid android:color="@color/neutral_400"/>
+    <solid android:color="@color/neutral_300"/>
 
     <!-- Sudut melengkung 16dp (biar sama kayak card lain) -->
     <corners android:radius="16dp" />

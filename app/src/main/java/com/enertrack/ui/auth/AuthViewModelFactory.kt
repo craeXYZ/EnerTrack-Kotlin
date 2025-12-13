@@ -7,15 +7,17 @@ import com.enertrack.data.local.SessionManager
 import com.enertrack.data.network.RetrofitClient
 import com.enertrack.data.repository.AuthRepository
 
-// 1. Factory sekarang butuh Context untuk bekerja
+// 1. Factory butuh Context untuk diteruskan ke Repository
 class AuthViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(AuthViewModel::class.java)) {
 
-            // 2. Di dalam factory, kita buat semua yang dibutuhkan oleh AuthViewModel
+            // 2. Siapkan dependensi
             val apiService = RetrofitClient.getInstance(context)
             val sessionManager = SessionManager(context)
-            val repository = AuthRepository(apiService, sessionManager) // Berikan sessionManager ke repository
+
+            // 3. UPDATED: Masukkan context sebagai parameter ke-3
+            val repository = AuthRepository(apiService, sessionManager, context)
 
             @Suppress("UNCHECKED_CAST")
             return AuthViewModel(repository) as T

@@ -1,38 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipe_refresh_analytics"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#F9FAFB"
-    tools:context=".ui.analytic.AnalyticsFragment">
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:background="#F9FAFB">
 
-        <TextView
-            style="@style/TextAppearance.EnerTrack.Title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Energy Analytics" />
-        <TextView
-            style="@style/TextAppearance.EnerTrack.Label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:text="Real-time data from server" />
-
-        <!-- CHART 1: WEEKLY -->
-        <com.google.android.material.card.MaterialCardView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="2dp"
-            app:cardBackgroundColor="@android:color/white">
+            android:orientation="vertical"
+            android:paddingBottom="80dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -40,122 +25,159 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <!-- Label Weekly -->
                 <TextView
+                    style="@style/TextAppearance.EnerTrack.Title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Weekly Usage"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:textColor="@color/black"
-                    android:layout_marginBottom="4dp"/>
-
+                    android:text="Energy Analytics" />
                 <TextView
+                    style="@style/TextAppearance.EnerTrack.Label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Last 7 Days"
-                    android:textSize="12sp"
-                    android:textColor="#757575"
-                    android:layout_marginBottom="16dp"/>
+                    android:layout_marginBottom="16dp"
+                    android:text="Real-time data from server" />
 
-                <FrameLayout
+                <!-- CHART 1: WEEKLY (DIBUAT PUTIH BERSIH) -->
+                <!-- Perubahan: Elevation 0dp, Tambah Stroke -->
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
-                    android:layout_height="200dp">
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/neutral_200"
+                    app:strokeWidth="1dp"
+                    app:cardBackgroundColor="@color/white">
 
-                    <com.db.williamchart.view.BarChartView
-                        android:id="@+id/chart_weekly"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        app:chart_barsColor="#10B981"
-                        app:chart_labelsSize="12sp"
-                        app:chart_labelsColor="#808080"
-                        app:chart_axis="xy"
-                        app:chart_spacing="12dp"
-                        app:chart_barsRadius="4dp"/>
-
-                    <ProgressBar
-                        android:id="@+id/progress_bar_weekly"
-                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center" />
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-                    <TextView
-                        android:id="@+id/tv_empty_weekly"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="Belum ada data minggu ini"
-                        android:textColor="#9E9E9E"
-                        android:visibility="gone"/>
-                </FrameLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+                        <!-- Label Weekly -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Weekly Usage"
+                            android:textStyle="bold"
+                            android:textSize="16sp"
+                            android:textColor="@color/black"
+                            android:layout_marginBottom="4dp"/>
 
-        <!-- CHART 2: MONTHLY -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="2dp"
-            app:cardBackgroundColor="@android:color/white">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Last 7 Days"
+                            android:textSize="12sp"
+                            android:textColor="#757575"
+                            android:layout_marginBottom="16dp"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="200dp">
 
-                <!-- Label Monthly -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Monthly Usage"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:textColor="@color/black"
-                    android:layout_marginBottom="4dp"/>
+                            <com.db.williamchart.view.BarChartView
+                                android:id="@+id/chart_weekly"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                app:chart_barsColor="#10B981"
+                                app:chart_labelsSize="12sp"
+                                app:chart_labelsColor="#808080"
+                                app:chart_axis="xy"
+                                app:chart_spacing="12dp"
+                                app:chart_barsRadius="4dp"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Per Week (W1 - W4)"
-                    android:textSize="12sp"
-                    android:textColor="#757575"
-                    android:layout_marginBottom="16dp"/>
+                            <ProgressBar
+                                android:id="@+id/progress_bar_weekly"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center" />
 
-                <FrameLayout
+                            <!-- UPDATE: Translate text to English -->
+                            <TextView
+                                android:id="@+id/tv_empty_weekly"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="No data available for this week"
+                                android:textColor="#9E9E9E"
+                                android:visibility="gone"/>
+                        </FrameLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- CHART 2: MONTHLY (DIBUAT PUTIH BERSIH) -->
+                <!-- Perubahan: Elevation 0dp, Tambah Stroke -->
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
-                    android:layout_height="200dp">
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/neutral_200"
+                    app:strokeWidth="1dp"
+                    app:cardBackgroundColor="@color/white">
 
-                    <com.db.williamchart.view.BarChartView
-                        android:id="@+id/chart_monthly"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        app:chart_barsColor="#3B82F6"
-                        app:chart_labelsSize="12sp"
-                        app:chart_labelsColor="#808080"
-                        app:chart_axis="xy"
-                        app:chart_spacing="24dp"
-                        app:chart_barsRadius="4dp"/>
-
-                    <ProgressBar
-                        android:id="@+id/progress_bar_monthly"
-                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center" />
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-                    <TextView
-                        android:id="@+id/tv_empty_monthly"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="Belum ada data bulan ini"
-                        android:textColor="#9E9E9E"
-                        android:visibility="gone"/>
-                </FrameLayout>
+                        <!-- Label Monthly -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Monthly Usage"
+                            android:textStyle="bold"
+                            android:textSize="16sp"
+                            android:textColor="@color/black"
+                            android:layout_marginBottom="4dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Per Week (W1 - W4)"
+                            android:textSize="12sp"
+                            android:textColor="#757575"
+                            android:layout_marginBottom="16dp"/>
+
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="200dp">
+
+                            <com.db.williamchart.view.BarChartView
+                                android:id="@+id/chart_monthly"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                app:chart_barsColor="#3B82F6"
+                                app:chart_labelsSize="12sp"
+                                app:chart_labelsColor="#808080"
+                                app:chart_axis="xy"
+                                app:chart_spacing="24dp"
+                                app:chart_barsRadius="4dp"/>
+
+                            <ProgressBar
+                                android:id="@+id/progress_bar_monthly"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center" />
+
+                            <!-- UPDATE: Translate text to English -->
+                            <TextView
+                                android:id="@+id/tv_empty_monthly"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="No data available for this month"
+                                android:textColor="#9E9E9E"
+                                android:visibility="gone"/>
+                        </FrameLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-    </LinearLayout>
-</ScrollView>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

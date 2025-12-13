@@ -62,9 +62,6 @@ interface ApiService {
     @HTTP(method = "DELETE", path = "user/appliances", hasBody = true)
     suspend fun deleteHistoryItem(@Body body: Map<String, Int>): Response<Unit>
 
-    // =================================================================
-    // ===            TAMBAHAN BARU BUAT FITUR CHAT                  ===
-    // =================================================================
 
     // 1. Ambil daftar perangkat unik buat ngisi Dropdown Chat
     @GET("api/devices/list")
@@ -76,5 +73,9 @@ interface ApiService {
 
     @GET("api/insight")
     suspend fun getInsight(): Response<InsightResponse>
+
+    // KEMBALI KE RUTE LAMA UNTUK MENGURANGI KEANEHAN DARI PROXY
+    @POST("api/user/fcm-token")
+    suspend fun updateFcmToken(@Body request: FcmTokenRequest): Response<Unit>
 
 }

@@ -8,23 +8,43 @@
     android:background="@color/main_background"
     tools:context=".ui.home.HomeFragment">
 
-    <!-- ScrollView DIHAPUS sesuai permintaan -->
+    <!-- Tambahan: Sebaiknya dibungkus ScrollView jika konten melebihi tinggi layar -->
+    <!-- Tapi sesuai request, kita padatkan margin-nya saja di sini -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingHorizontal="16dp">
 
+        <!-- HEADER -->
+        <!-- UPDATE: Margin atas dikurangi biar naik -->
+        <TextView
+            style="@style/TextAppearance.EnerTrack.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Energy Dashboard" />
+
+        <!-- UPDATE: Margin bawah dikurangi biar kartu summary naik -->
+        <TextView
+            style="@style/TextAppearance.EnerTrack.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Overview &amp; daily summary" />
+
         <!-- ====================================================== -->
-        <!-- SEKSI 1: SUMMARY CARDS (DIUBAH JADI 1 KARTU)         -->
+        <!-- KARTU 1: SUMMARY (DIBUAT PUTIH BERSIH)                 -->
+        <!-- Perubahan: Elevation 0dp, Tambah Stroke (Garis Tepi)   -->
         <!-- ====================================================== -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardBackgroundColor="@color/card_background"
+            app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="16dp"
-            app:cardElevation="2dp">
+            app:cardElevation="0dp"
+            app:strokeColor="@color/neutral_200"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -33,7 +53,7 @@
                 android:orientation="horizontal"
                 android:padding="16dp">
 
-                <!-- Konten 1: Today's Consumption -->
+                <!-- Today's Consumption -->
                 <LinearLayout
                     android:id="@+id/layout_summary_today"
                     android:layout_width="0dp"
@@ -77,14 +97,14 @@
                         android:textColor="@color/text_secondary" />
                 </LinearLayout>
 
-                <!-- Divider Vertikal -->
+                <!-- Divider -->
                 <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:layout_marginHorizontal="8dp"
-                    android:background="@color/neutral_200" /> <!-- neutral_200 dari colors.xml lama -->
+                    android:background="@color/neutral_200" />
 
-                <!-- Konten 2: This Week -->
+                <!-- This Week -->
                 <LinearLayout
                     android:id="@+id/layout_summary_week"
                     android:layout_width="0dp"
@@ -128,14 +148,14 @@
                         android:textColor="@color/text_secondary" />
                 </LinearLayout>
 
-                <!-- Divider Vertikal -->
+                <!-- Divider -->
                 <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:layout_marginHorizontal="8dp"
                     android:background="@color/neutral_200" />
 
-                <!-- Konten 3: Est. Cost -->
+                <!-- Est. Cost -->
                 <LinearLayout
                     android:id="@+id/layout_summary_cost"
                     android:layout_width="0dp"
@@ -184,15 +204,19 @@
         </com.google.android.material.card.MaterialCardView>
 
         <!-- ====================================================== -->
-        <!-- SEKSI 2: MINI ANALYTICS (BARU DITAMBAH)              -->
+        <!-- KARTU 2: ANALYTICS (DIBUAT PUTIH BERSIH)               -->
+        <!-- Perubahan: Elevation 0dp, Tambah Stroke (Garis Tepi)   -->
+        <!-- UPDATE: Margin Top dikurangi jadi 12dp biar lebih rapet -->
         <!-- ====================================================== -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            app:cardBackgroundColor="@color/card_background"
+            android:layout_marginTop="12dp"
+            app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="16dp"
-            app:cardElevation="2dp">
+            app:cardElevation="0dp"
+            app:strokeColor="@color/neutral_200"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -214,7 +238,6 @@
                         android:text="Weekly Usage Overview"
                         android:textColor="@color/text_primary" />
 
-                    <!-- Ini tombol "View More" kamu -->
                     <Button
                         android:id="@+id/btn_view_more_analytics"
                         style="@style/Widget.Material3.Button.TextButton"
@@ -229,7 +252,6 @@
                         app:iconGravity="end"
                         android:paddingEnd="0dp"
                         android:paddingStart="8dp" />
-
                 </RelativeLayout>
 
                 <TextView
@@ -241,9 +263,6 @@
                     android:text="See how your energy usage changes this week."
                     android:textColor="@color/text_secondary" />
 
-                <!-- ====================================================== -->
-                <!--           INI BAGIAN YANG DIPERBAIKI (1/2)           -->
-                <!-- ====================================================== -->
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -270,9 +289,6 @@
                         android:visibility="gone"
                         tools:visibility="visible"/>
 
-                    <!-- ====================================================== -->
-                    <!--           INI BAGIAN YANG DIPERBAIKI (2/2)           -->
-                    <!-- ====================================================== -->
                     <TextView
                         android:id="@+id/tv_no_chart_data"
                         android:layout_width="wrap_content"
@@ -283,19 +299,12 @@
                         android:visibility="gone" />
 
                 </FrameLayout>
-                <!-- ====================================================== -->
-                <!--                YANG DIHAPUS (2/2)                    -->
-                <!-- Placeholder-nya dihapus karena sudah ada ProgressBar -->
-                <!-- ====================================================== -->
-
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
 
-        <!-- ====================================================== -->
-        <!-- SEKSI 3: RECENT ACTIVITY (SUDAH ADA, TIDAK DIUBAH)   -->
-        <!-- ====================================================== -->
+        <!-- RECENT ACTIVITY (Margin top sudah 8dp, aman) -->
         <LinearLayout
             android:id="@+id/layout_recent_activity"
             android:layout_width="match_parent"
@@ -307,8 +316,8 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="8dp">
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp">
 
                 <TextView
                     style="@style/TextAppearance.Material3.TitleMedium"
@@ -340,7 +349,6 @@
                 tools:listitem="@layout/item_recent_history" />
         </LinearLayout>
 
-        <!-- tv_no_activity dibalikin lagi, tapi di luar RecyclerView -->
         <TextView
             android:id="@+id/tv_no_activity"
             android:layout_width="match_parent"
@@ -354,4 +362,3 @@
 
     </LinearLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-

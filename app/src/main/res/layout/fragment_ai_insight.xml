@@ -8,198 +8,186 @@
     android:background="#F9FAFB"
     tools:context=".ui.ai.AiInsightFragment">
 
-    <!-- Header Custom -->
-    <LinearLayout
+    <!-- Swipe Refresh -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_insight"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@android:color/white"
-        android:padding="16dp"
-        android:gravity="center_vertical"
-        android:elevation="2dp">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="AI Energy Insight"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"/>
-
-        <!-- ID PENTING: btnRefresh -->
-        <ImageView
-            android:id="@+id/btnRefresh"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/ic_refresh"
-            app:tint="#BDBDBD"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            tools:ignore="ContentDescription"/>
-    </LinearLayout>
-
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:paddingBottom="80dp"
-        android:clipToPadding="false">
-
-        <LinearLayout
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_height="match_parent"
+            android:paddingBottom="80dp"
+            android:clipToPadding="false">
 
-            <!-- 1. CARD GRADE / RATING -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
-                app:strokeColor="#E0E0E0"
-                app:strokeWidth="1dp"
-                android:layout_marginBottom="24dp"
-                app:cardBackgroundColor="@android:color/white">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:gravity="center">
-
-                    <!-- ID PENTING: tvSubtitle -->
-                    <TextView
-                        android:id="@+id/tvSubtitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Monthly Energy Efficiency"
-                        android:textColor="#757575"
-                        android:textSize="14sp"/>
-
-                    <!-- ID PENTING: tvGrade -->
-                    <TextView
-                        android:id="@+id/tvGrade"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="-"
-                        android:textSize="56sp"
-                        android:textStyle="bold"
-                        android:textColor="#BDBDBD"
-                        android:layout_marginVertical="8dp"/>
-
-                    <!-- ID PENTING: tvGradeMessage -->
-                    <TextView
-                        android:id="@+id/tvGradeMessage"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Loading analysis..."
-                        android:gravity="center"
-                        android:textSize="14sp"
-                        android:textColor="#424242"/>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- 2. AI SUGGESTIONS -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Smart Suggestions (AI)"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="@color/black"
-                android:layout_marginBottom="12dp"/>
-
-            <!-- ID PENTING: layoutTipsContainer -->
             <LinearLayout
-                android:id="@+id/layoutTipsContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/bg_rounded_white"
-                android:padding="16dp"
-                android:layout_marginBottom="24dp">
+                android:padding="16dp">
 
-                <!-- Tips akan masuk ke sini otomatis -->
-                <ProgressBar
+                <!-- HEADER CUSTOM -->
+                <TextView
+                    style="@style/TextAppearance.EnerTrack.Title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"/>
+                    android:text="AI Analysis" />
 
-            </LinearLayout>
+                <TextView
+                    style="@style/TextAppearance.EnerTrack.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:text="Smart analysis &amp; efficiency tips" />
 
-            <!-- 3. CHATBOX LINK -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Need More Help?"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="@color/black"
-                android:layout_marginBottom="12dp"/>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_chat_ai"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:cardBackgroundColor="@color/white"
-                android:clickable="true"
-                android:focusable="true">
-
-                <LinearLayout
+                <!-- 1. CARD GRADE / RATING (SUDAH BENAR, DITUNE DIKIT) -->
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="16dp"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:src="@drawable/ic_chat"
-                        app:tint="@color/primary_accent"
-                        android:background="@drawable/bg_circle_light_blue"
-                        android:padding="10dp"
-                        tools:ignore="ContentDescription"/>
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/neutral_200"
+                    app:strokeWidth="1dp"
+                    android:layout_marginBottom="24dp"
+                    app:cardBackgroundColor="@color/white">
 
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:orientation="vertical"
-                        android:layout_marginStart="16dp">
+                        android:padding="20dp"
+                        android:gravity="center">
 
                         <TextView
+                            android:id="@+id/tvSubtitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Ask AI Assistant"
+                            android:text="Monthly Energy Efficiency"
+                            android:textColor="#757575"
+                            android:textSize="14sp"/>
+
+                        <TextView
+                            android:id="@+id/tvGrade"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textSize="56sp"
                             android:textStyle="bold"
-                            android:textSize="16sp"
-                            android:textColor="@color/text_primary"/>
+                            android:textColor="#BDBDBD"
+                            android:layout_marginVertical="8dp"/>
 
                         <TextView
+                            android:id="@+id/tvGradeMessage"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Ask for specific tips or bill analysis."
-                            android:textSize="12sp"
-                            android:textColor="@color/text_secondary"
-                            android:layout_marginTop="4dp"/>
+                            android:text="Loading analysis..."
+                            android:gravity="center"
+                            android:textSize="14sp"
+                            android:textColor="#424242"/>
                     </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_arrow_right"
-                        app:tint="@color/neutral_400"
-                        tools:ignore="ContentDescription"/>
+                <!-- 2. AI SUGGESTIONS -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Smart Suggestions (AI)"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="@color/black"
+                    android:layout_marginBottom="12dp"/>
+
+                <!-- Container Tips (Masih pakai drawable bg_rounded_white) -->
+                <!-- Kalau ini mau diubah jadi CardView juga biar konsisten, kabari ya -->
+                <LinearLayout
+                    android:id="@+id/layoutTipsContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_rounded_white"
+                    android:padding="16dp"
+                    android:layout_marginBottom="24dp">
+
+                    <ProgressBar
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"/>
+
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
 
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+                <!-- 3. CHATBOX LINK (DIBUAT PUTIH BERSIH) -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Need More Help?"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="@color/black"
+                    android:layout_marginBottom="12dp"/>
+
+                <!-- Perubahan: Elevation 0dp, Tambah Stroke, Background White -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_chat_ai"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/neutral_200"
+                    app:strokeWidth="1dp"
+                    app:cardBackgroundColor="@color/white"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="16dp"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@drawable/ic_chat"
+                            app:tint="@color/primary_accent"
+                            android:background="@drawable/bg_circle_light_blue"
+                            android:padding="10dp"
+                            tools:ignore="ContentDescription"/>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="16dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Ask AI Assistant"
+                                android:textStyle="bold"
+                                android:textSize="16sp"
+                                android:textColor="@color/text_primary"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Ask for specific tips or bill analysis."
+                                android:textSize="12sp"
+                                android:textColor="@color/text_secondary"
+                                android:layout_marginTop="4dp"/>
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_arrow_right"
+                            app:tint="@color/neutral_400"
+                            tools:ignore="ContentDescription"/>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

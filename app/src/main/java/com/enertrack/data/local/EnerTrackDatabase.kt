@@ -13,16 +13,12 @@ import com.enertrack.data.local.entity.HistoryItemEntity
     entities = [
         CategoryEntity::class,
         HistoryItemEntity::class
-        // Tambahin entity lain di sini kalo ada (misal DeviceEntity)
     ],
-    // --- UBAH ANGKA INI JADI 2 ---
-    version = 2, // Naikkan versi ini kalo kamu ubah struktur tabel
-    // -----------------------------
+    version = 2,
     exportSchema = false
 )
 abstract class EnerTrackDatabase : RoomDatabase() {
 
-    // Daftarin semua DAO di sini
     abstract fun categoryDao(): CategoryDao
     abstract fun historyDao(): HistoryDao
 
@@ -35,15 +31,26 @@ abstract class EnerTrackDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     EnerTrackDatabase::class.java,
-                    "enertrack_database" // Nama file DB-nya
+                    "enertrack_database"
                 )
-                    // Ini udah bener, biarin aja. Pas ganti versi, data lama dihapus (aman buat development)
                     .fallbackToDestructiveMigration()
                     .build()
 
                 INSTANCE = instance
                 instance
             }
+        }
+
+        // === TAMBAHAN BARU: FUNGSI BUAT MATIIN DB ===
+        fun destroyInstance() {
+            try {
+                if (INSTANCE?.isOpen == true) {
+                    INSTANCE?.close() // Tutup koneksi biar file nggak dikunci
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            INSTANCE = null // Reset variable biar nanti bikin baru lagi
         }
     }
 }

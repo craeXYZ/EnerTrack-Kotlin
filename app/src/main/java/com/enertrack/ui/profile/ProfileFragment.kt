@@ -43,6 +43,17 @@ class ProfileFragment : Fragment() {
     private fun setupUI() {
         // Pastikan layout edit tersembunyi di awal
         toggleEditMode(false)
+
+        // Setup Swipe Refresh
+        binding.swipeRefreshProfile.setOnRefreshListener {
+            viewModel.refreshUserData()
+            // Karena data diambil dari lokal (session manager), prosesnya cepat
+            // Kita kasih delay sedikit biar animasi kelihatan natural
+            binding.swipeRefreshProfile.postDelayed({
+                binding.swipeRefreshProfile.isRefreshing = false
+                Toast.makeText(context, "Profile Refreshed", Toast.LENGTH_SHORT).show()
+            }, 500)
+        }
     }
 
     private fun setupClickListeners() {
