@@ -22,6 +22,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.enertrack.data.local.SessionManager
 import com.enertrack.data.model.FcmTokenRequest
 import com.enertrack.data.network.ApiService
+import com.enertrack.data.network.RetrofitClient // Pastikan Import ini ada
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -40,13 +41,11 @@ class MainActivity : AppCompatActivity() {
     // 1. SessionManager
     private lateinit var sessionManager: SessionManager
 
-    // --- Inisialisasi API Service ---
+    // --- PERBAIKAN: Gunakan RetrofitClient Singleton ---
+    // Hapus kode Retrofit.Builder manual yang URL-nya salah tadi.
+    // Pakai RetrofitClient.getInstance(this) biar URL-nya sama dengan yang lain.
     private val apiService: ApiService by lazy {
-        Retrofit.Builder()
-            .baseUrl("https://backend-enertrack-production.up.railway.app/") // URL Production
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(ApiService::class.java)
+        RetrofitClient.getInstance(this)
     }
 
     private val requestPermissionLauncher = registerForActivityResult(
@@ -174,7 +173,7 @@ class MainActivity : AppCompatActivity() {
                     Log.e("FCM_LOG", "❌ Gagal update token: ${response.code()} - ${response.message()}")
                 }
             } catch (e: Exception) {
-                Log.e("FCM_LOG", "❌ Error koneksi API: ${e.message}")
+                Log.e("FCM", "❌ Error koneksi API: ${e.message}")
             }
         }
     }

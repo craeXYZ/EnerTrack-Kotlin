@@ -74,8 +74,8 @@ interface ApiService {
     @GET("api/insight")
     suspend fun getInsight(): Response<InsightResponse>
 
-    // KEMBALI KE RUTE LAMA UNTUK MENGURANGI KEANEHAN DARI PROXY
-    @POST("api/user/fcm-token")
+    // === FIX 1: SAMAKAN DENGAN BACKEND (Route di main.go adalah /update-token) ===
+    @POST("update-token")
     suspend fun updateFcmToken(@Body request: FcmTokenRequest): Response<Unit>
 
 }

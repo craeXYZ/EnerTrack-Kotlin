@@ -1,20 +1,28 @@
 package com.enertrack.ui.calculate
 
+import android.util.Log
 import androidx.lifecycle.*
-import com.enertrack.data.model.* // Import SubmitPayload, DevicePayload, Appliance, IotDevice
+import com.enertrack.data.model.*
 import com.enertrack.data.repository.CalculateRepository
 import com.enertrack.data.repository.HistoryRepository
 import com.enertrack.data.repository.Result
 import com.enertrack.data.repository.onFailure
 import com.enertrack.data.repository.onSuccess
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.firestore
+import com.google.firebase.Timestamp
 import kotlinx.coroutines.launch
 
 class CalculateViewModel(
     private val calculateRepository: CalculateRepository,
     private val historyRepository: HistoryRepository
 ) : ViewModel() {
+
+    private val TAG = "CalculateViewModel"
+
+    // Listener Registration untuk cleanup
+    private var firestoreListener: ListenerRegistration? = null
 
     // --- MANUAL CALC DATA ---
     private val _applianceList = MutableLiveData<List<Appliance>>(emptyList())
@@ -36,7 +44,6 @@ class CalculateViewModel(
     private var categoriesMap: Map<Int, String> = emptyMap()
 
     // --- REALTIME IoT DATA (FIRESTORE) ---
-    // Kita pakai ini menggantikan simulasi lama kamu biar datanya asli
     private val db = Firebase.firestore
 
     private val _iotDevicesList = MutableLiveData<List<IotDevice>>()
@@ -47,7 +54,7 @@ class CalculateViewModel(
 
     init {
         fetchCategoriesMap()
-        startRealtimeMonitoring() // Panggil fungsi Firestore, bukan startIoTSimulation
+        // startRealtimeMonitoring() // Jangan panggil di init jika dipanggil di Fragment
     }
 
     // --- FUNGSI HELPER MANUAL ---
@@ -103,7 +110,7 @@ class CalculateViewModel(
         val currentId = System.currentTimeMillis()
 
         val finalCategoryId = categoryIdFromDevice ?: 1
-        val finalCategoryName = categoriesMap[finalCategoryId] ?: "Electronics" // UPDATE: English Text
+        val finalCategoryName = categoriesMap[finalCategoryId] ?: "Electronics"
 
         val newAppliance = Appliance(
             id = currentId,
@@ -132,14 +139,13 @@ class CalculateViewModel(
         _applianceList.value = currentList.filter { it.id != id }
     }
 
-    // --- FUNGSI SUBMIT (MENGGUNAKAN LOGIKA LAMA YANG BENAR) ---
+    // --- FUNGSI SUBMIT ---
     fun submitDeviceList(houseCapacity: String, billingType: String) {
         val list = _applianceList.value
         if (list.isNullOrEmpty()) return
 
         val capacityValue = houseCapacity.replace(" VA", "").replace(".", "").toDoubleOrNull() ?: 0.0
 
-        // 1. Mapping menggunakan DevicePayload (Bukan 'Device' buatan saya tadi)
         val devicePayloadList = list.map { appliance ->
             DevicePayload(
                 billingType = billingType,
@@ -153,19 +159,15 @@ class CalculateViewModel(
             )
         }
 
-        // 2. Bungkus menggunakan SubmitPayload (Bukan 'UserInput')
-        // Struktur ini yang dimengerti oleh Repository kamu
         val payload = SubmitPayload(
             billingtype = billingType,
             electricity = mapOf("capacity" to capacityValue),
             devices = devicePayloadList
         )
 
-        // 3. Kirim ke Repository
         viewModelScope.launch {
             calculateRepository.submitDevices(payload).onSuccess { data ->
                 _submissionStatus.value = Result.Success(data)
-                // UPDATE: Kosongkan list setelah sukses (Fitur Reset)
                 _applianceList.value = emptyList()
             }.onFailure { e ->
                 _submissionStatus.value = Result.Failure(e)
@@ -174,24 +176,52 @@ class CalculateViewModel(
     }
 
 
-    // === REALTIME MONITORING FUNCTION (DARI KODE BARU) ===
+    // === REALTIME MONITORING FUNCTION ===
     fun startRealtimeMonitoring() {
-        val currentUserId = 11 // TODO: Nanti ambil dari User Session asli
+        // Hapus listener lama jika ada untuk mencegah duplikasi
+        firestoreListener?.remove()
 
-        db.collection("monitoring_live")
+        // FIX PENTING: Ganti ID jadi 16 agar sinkron dengan Backend Go baru
+        val currentUserId = 16
+
+        Log.d(TAG, "Starting monitoring for user_id: $currentUserId")
+
+        // Kita gunakan variabel listener agar bisa dicancel nanti
+        firestoreListener = db.collection("monitoring_live")
             .whereEqualTo("user_id", currentUserId)
             .addSnapshotListener { snapshots, e ->
                 if (e != null) {
+                    Log.e(TAG, "Listen failed.", e)
                     return@addSnapshotListener
                 }
 
                 if (snapshots != null && !snapshots.isEmpty) {
+                    Log.d(TAG, "Data received. Documents count: ${snapshots.size()}")
+
                     val devices = ArrayList<IotDevice>()
                     for (doc in snapshots.documents) {
-                        // Pastikan IotDevice punya empty constructor di data model
-                        val device = doc.toObject(IotDevice::class.java)?.copy(docId = doc.id)
-                        if (device != null) {
+                        // Gunakan data!! karena kita yakin tidak null di dalam snapshot yang valid
+                        val data = doc.data
+                        if (data == null) continue
+
+                        Log.d(TAG, "Processing doc: ${doc.id} | Data: $data")
+
+                        try {
+                            // Manual mapping yang aman
+                            val device = IotDevice(
+                                docId = doc.id,
+                                user_id = (data["user_id"] as? Number)?.toInt() ?: 0,
+                                device_name = data["device_name"] as? String ?: "Unknown",
+                                status = data["status"] as? String ?: "OFFLINE",
+                                watt = (data["watt"] as? Number)?.toDouble() ?: 0.0,
+                                voltase = (data["voltase"] as? Number)?.toDouble() ?: 0.0,
+                                ampere = (data["ampere"] as? Number)?.toDouble() ?: 0.0,
+                                // FIX: Hapus kwh_total
+                                last_update = data["last_update"] as? Timestamp
+                            )
                             devices.add(device)
+                        } catch (ex: Exception) {
+                            Log.e(TAG, "FATAL ERROR during manual mapping for doc: ${doc.id}", ex)
                         }
                     }
                     _iotDevicesList.value = devices
@@ -205,6 +235,7 @@ class CalculateViewModel(
                         }
                     }
                 } else {
+                    Log.d(TAG, "No documents found for user_id: $currentUserId")
                     _iotDevicesList.value = emptyList()
                 }
             }
@@ -216,5 +247,10 @@ class CalculateViewModel(
 
     fun clearSelection() {
         _selectedIotDevice.value = null
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        firestoreListener?.remove() // Bersihkan listener saat ViewModel dihancurkan
     }
 }

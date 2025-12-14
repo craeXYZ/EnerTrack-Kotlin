@@ -58,6 +58,10 @@ class CalculateFragment : Fragment() {
         observeViewModel()
         viewModel.fetchHouseCapacities()
         viewModel.fetchBrands()
+
+        // FIX: Panggil startRealtimeMonitoring() di sini juga,
+        // agar listener langsung aktif saat fragment dibuat.
+        viewModel.startRealtimeMonitoring()
     }
 
     // ==========================================
@@ -164,7 +168,11 @@ class CalculateFragment : Fragment() {
 
     private fun setupClickListeners() {
         binding.btnBackToList.setOnClickListener { showIoTListMode() }
-        binding.btnRefreshIot.setOnClickListener { viewModel.startRealtimeMonitoring() }
+        binding.btnRefreshIot.setOnClickListener {
+            // FIX: Tambahkan indikator loading saat refresh
+            binding.pbIotLoading.visibility = View.VISIBLE
+            viewModel.startRealtimeMonitoring()
+        }
 
         binding.fabAddDevice.setOnClickListener {
             showAddDeviceBottomSheet()
@@ -203,6 +211,9 @@ class CalculateFragment : Fragment() {
                         binding.iotContentContainer.visibility = View.VISIBLE
                         binding.fabAddDevice.hide()
                         showIoTListMode()
+                        // FIX: Memastikan monitoring dimulai dan loading ditunjukkan saat tab IoT dipilih
+                        binding.pbIotLoading.visibility = View.VISIBLE
+                        viewModel.startRealtimeMonitoring()
                     }
                 }
             }
@@ -228,14 +239,15 @@ class CalculateFragment : Fragment() {
     private fun observeViewModel() {
         // --- IoT Data ---
         viewModel.iotDevicesList.observe(viewLifecycleOwner) { devices ->
+            // FIX: Selalu sembunyikan loading setelah data diterima (baik kosong atau ada)
+            binding.pbIotLoading.visibility = View.GONE
+
             if (devices.isNullOrEmpty()) {
                 binding.rvIotDevices.visibility = View.GONE
                 binding.tvIotEmpty.visibility = View.VISIBLE
-                binding.pbIotLoading.visibility = View.GONE
             } else {
                 binding.rvIotDevices.visibility = View.VISIBLE
                 binding.tvIotEmpty.visibility = View.GONE
-                binding.pbIotLoading.visibility = View.GONE
                 iotAdapter.setData(devices)
             }
         }

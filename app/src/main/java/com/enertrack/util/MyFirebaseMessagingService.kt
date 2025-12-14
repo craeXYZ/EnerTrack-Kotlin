@@ -10,37 +10,52 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.enertrack.MainActivity
 import com.enertrack.R
+import com.enertrack.data.local.SessionManager
+import com.enertrack.data.model.FcmTokenRequest
+import com.enertrack.data.network.RetrofitClient
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
-    // Fungsi ini dipanggil kalau ada token baru
     override fun onNewToken(token: String) {
-        Log.d("FCM", "Refreshed token: $token")
-        // Nanti token ini dikirim ke Backend Go
+        super.onNewToken(token)
+        Log.d("FCM", "Token baru: $token")
+
+        // Simpan token baru ke server jika user sedang login
+        val sessionManager = SessionManager(applicationContext)
+        val userIdStr = sessionManager.getUserId()
+        val userId = userIdStr?.toIntOrNull()
+
+        if (userId != null && userId != 0) {
+            sendTokenToServer(userId, token)
+        }
     }
 
-    // Fungsi ini dipanggil kalau ada pesan masuk pas aplikasi lagi DIBUKA (Foreground)
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        Log.d("FCM", "From: ${remoteMessage.from}")
+        super.onMessageReceived(remoteMessage)
+        Log.d("FCM", "Pesan diterima dari: ${remoteMessage.from}")
 
-        // Cek notification payload
+        // 1. Cek payload Notifikasi
         remoteMessage.notification?.let {
-            Log.d("FCM", "Message Notification Body: ${it.body}")
-            sendNotification(it.title ?: "Alert", it.body ?: "Something happened!")
+            showNotification(it.title ?: "EnerTrack", it.body ?: "Pesan baru masuk")
         }
 
-        // Cek data payload (Background)
+        // 2. Cek payload Data (untuk custom logic dari backend)
         if (remoteMessage.data.isNotEmpty()) {
             val title = remoteMessage.data["title"] ?: "EnerTrack Alert"
-            val body = remoteMessage.data["body"] ?: "Check your device status."
-            sendNotification(title, body)
+            val body = remoteMessage.data["body"] ?: "Periksa status perangkat Anda."
+            showNotification(title, body)
         }
     }
 
-    // Fungsi buat nampilin notifikasi di Status Bar
-    private fun sendNotification(title: String, messageBody: String) {
+    private fun showNotification(title: String, message: String) {
+        val channelId = "enertrack_alert_channel"
+        val notificationId = System.currentTimeMillis().toInt()
+
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
@@ -49,30 +64,43 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val channelId = "enertrack_alert_channel"
-        val defaultSoundUri = android.media.RingtoneManager.getDefaultUri(android.media.RingtoneManager.TYPE_NOTIFICATION)
-
-        val notificationBuilder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.ic_lightbulb_outline)
+        // Menggunakan ic_launcher agar aman (fallback dari ic_lightbulb_outline)
+        val builder = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle(title)
-            .setContentText(messageBody)
+            .setContentText(message)
             .setAutoCancel(true)
-            .setSound(defaultSoundUri)
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        // Wajib buat Android Oreo ke atas
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
                 "EnerTrack Alerts",
                 NotificationManager.IMPORTANCE_HIGH
             )
-            notificationManager.createNotificationChannel(channel)
+            manager.createNotificationChannel(channel)
         }
 
-        notificationManager.notify(0, notificationBuilder.build())
+        manager.notify(notificationId, builder.build())
+    }
+
+    private fun sendTokenToServer(userId: Int, token: String) {
+        val apiService = RetrofitClient.getInstance(applicationContext)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val request = FcmTokenRequest(userId, token)
+                val response = apiService.updateFcmToken(request)
+                if (response.isSuccessful) {
+                    Log.d("FCM", "Token berhasil diperbarui di server")
+                } else {
+                    Log.e("FCM", "Gagal update token: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                Log.e("FCM", "Error koneksi saat update token", e)
+            }
+        }
     }
 }
