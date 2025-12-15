@@ -6,15 +6,14 @@
 
     <style name="Theme.EnerTrack" parent="Base.Theme.EnerTrack">
         <!-- ============================================ -->
-        <!-- COLOR PALETTE (DARK MODE) -->
+        <!-- COLOR PALETTE (DARK MODE FIXED) -->
         <!-- ============================================ -->
 
         <!-- WARNA UTAMA -->
-        <!-- Gunakan versi pastel/terang biar kontras di background gelap -->
         <item name="colorPrimary">@color/primary_accent_dark</item>
-        <item name="colorOnPrimary">@color/mirage</item> <!-- Text di atas tombol primary harus gelap biar kebaca -->
+        <item name="colorOnPrimary">@color/mirage</item>
 
-        <!-- CONTAINER (PENTING: Biru Gelap, bukan Putih/Soft Blue) -->
+        <!-- CONTAINER -->
         <item name="colorPrimaryContainer">@color/dark_primary_container</item>
         <item name="colorOnPrimaryContainer">@color/dark_on_primary_container</item>
 
@@ -24,54 +23,53 @@
         <item name="colorSecondaryContainer">@color/dark_surface_variant</item>
         <item name="colorOnSecondaryContainer">@color/text_primary_dark</item>
 
-        <!-- WARNA TERTIARY -->
-        <item name="colorTertiary">@color/energyGreen</item>
-        <item name="colorOnTertiary">@color/white</item>
-        <item name="colorTertiaryContainer">@color/dark_surface_variant</item>
-
-        <!-- BACKGROUND & SURFACE (GELAP) -->
-        <item name="android:colorBackground">@color/dark_background</item> <!-- #121212 -->
-        <item name="colorSurface">@color/dark_surface</item> <!-- #1E1E1E (Card) -->
-        <item name="colorOnSurface">@color/text_primary_dark</item> <!-- Text Putih -->
-
-        <!-- Surface Variant (Card sekunder / Input field) -->
+        <!-- BACKGROUND & SURFACE -->
+        <item name="android:colorBackground">@color/dark_background</item>
+        <item name="colorSurface">@color/dark_surface</item>
+        <item name="colorOnSurface">@color/text_primary_dark</item>
         <item name="colorSurfaceVariant">@color/dark_surface_variant</item>
         <item name="colorOnSurfaceVariant">@color/text_secondary_dark</item>
 
-        <!-- TEXT COLORS DEFAULT -->
+        <!-- TEXT COLORS -->
         <item name="android:textColorPrimary">@color/text_primary_dark</item>
         <item name="android:textColorSecondary">@color/text_secondary_dark</item>
 
-        <!-- WARNA OUTLINE (Garis tepi input text) -->
+        <!-- OUTLINE -->
         <item name="colorOutline">@color/outline_dark</item>
         <item name="colorOutlineVariant">@color/neutral_700</item>
 
-        <!-- Status Bar & Nav Bar -->
+        <!-- STATUS BAR -->
         <item name="android:statusBarColor">@color/dark_background</item>
-        <item name="android:windowLightStatusBar">false</item> <!-- Icon status bar jadi putih -->
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 
     <!-- ============================================ -->
-    <!-- WIDGET STYLES (DARK MODE) -->
+    <!-- WIDGET STYLES DEFINITION -->
     <!-- ============================================ -->
 
-    <!-- Style CardView Summary -->
-    <style name="Widget.EnerTrack.SummaryCard" parent="Widget.Material3.CardView.Filled">
-        <item name="cardBackgroundColor">@color/dark_surface</item> <!-- Card Gelap -->
-        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.EnerTrack.Medium</item>
-        <!-- Hapus elevation biar flat ala modern dark mode, atau dikit aja -->
+    <!-- DEFINISI: Widget.EnerTrack.CardView (Style Induk untuk Card) -->
+    <!-- Wajib ada biar nggak error "Resource not found" -->
+    <style name="Widget.EnerTrack.CardView" parent="Widget.Material3.CardView.Filled">
+        <item name="cardBackgroundColor">@color/dark_surface</item>
         <item name="cardElevation">0dp</item>
         <item name="strokeWidth">1dp</item>
         <item name="strokeColor">@color/neutral_800</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.EnerTrack.Medium</item>
+    </style>
+
+    <!-- Style CardView Summary (Turunan dari Card Default) -->
+    <style name="Widget.EnerTrack.SummaryCard" parent="Widget.EnerTrack.CardView">
+        <!-- Sama persis kayak parentnya -->
     </style>
 
     <!-- Style CardView History -->
-    <style name="Widget.EnerTrack.HistoryCard" parent="Widget.Material3.CardView.Filled">
-        <item name="cardBackgroundColor">@color/dark_surface</item>
-        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.EnerTrack.Medium</item>
-        <item name="cardElevation">0dp</item>
-        <item name="strokeWidth">1dp</item>
-        <item name="strokeColor">@color/neutral_800</item>
+    <style name="Widget.EnerTrack.HistoryCard" parent="Widget.EnerTrack.CardView">
+    </style>
+
+    <!-- Style BottomSheet -->
+    <style name="ThemeOverlay.EnerTrack.BottomSheetDialog" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="android:colorBackground">@color/dark_surface</item>
+        <item name="colorSurface">@color/dark_surface</item>
     </style>
 
     <style name="ShapeAppearance.EnerTrack.Medium" parent="ShapeAppearance.Material3.MediumComponent">
@@ -79,24 +77,21 @@
         <item name="cornerSize">16dp</item>
     </style>
 
-    <!-- ============================================ -->
-    <!-- TEXT STYLES (DARK MODE) -->
-    <!-- ============================================ -->
-
+    <!-- TEXT STYLES -->
     <style name="TextAppearance.EnerTrack.Title" parent="TextAppearance.MaterialComponents.Headline6">
         <item name="android:textSize">22sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/text_primary_dark</item> <!-- Putih -->
+        <item name="android:textColor">@color/text_primary_dark</item>
     </style>
 
     <style name="TextAppearance.EnerTrack.Body" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/text_secondary_dark</item> <!-- Abu Terang -->
+        <item name="android:textColor">@color/text_secondary_dark</item>
     </style>
 
     <style name="TextAppearance.EnerTrack.Label" parent="TextAppearance.MaterialComponents.Caption">
         <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/text_disabled_dark</item> <!-- Abu Sedang -->
+        <item name="android:textColor">@color/text_disabled_dark</item>
     </style>
 
 </resources>

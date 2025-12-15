@@ -10,6 +10,10 @@ val room_version = "2.6.1"
 
 android {
     namespace = "com.enertrack"
+
+
+
+
     compileSdk = 36
 
     defaultConfig {
@@ -84,6 +88,7 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-messaging")
+    implementation("com.google.firebase:firebase-database-ktx")
 
     // --- ROOM DATABASE (Konsisten pakai variabel room_version) ---
     implementation("androidx.room:room-runtime:$room_version")

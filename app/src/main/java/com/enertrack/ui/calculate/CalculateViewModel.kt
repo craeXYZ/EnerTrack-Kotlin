@@ -9,9 +9,11 @@ import com.enertrack.data.repository.Result
 import com.enertrack.data.repository.onFailure
 import com.enertrack.data.repository.onSuccess
 import com.google.firebase.Firebase
-import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.firestore
 import com.google.firebase.Timestamp
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.launch
 
 class CalculateViewModel(
@@ -20,7 +22,12 @@ class CalculateViewModel(
 ) : ViewModel() {
 
     private val TAG = "CalculateViewModel"
-    private var firestoreListener: ListenerRegistration? = null
+
+    // [MODIFIED] Ganti Firestore Listener jadi RTDB Listener
+    private var rtdbListener: ValueEventListener? = null
+
+    // [MODIFIED] Init RTDB dengan URL Asia Southeast (Sesuai backend kamu)
+    private val rtdb = FirebaseDatabase.getInstance("https://enertrack-test-default-rtdb.asia-southeast1.firebasedatabase.app")
 
     // --- MANUAL CALC DATA ---
     private val _applianceList = MutableLiveData<List<Appliance>>(emptyList())
@@ -46,7 +53,6 @@ class CalculateViewModel(
     private var categoriesMap: Map<Int, String> = emptyMap()
 
     // --- REALTIME IoT DATA ---
-    private val db = Firebase.firestore
     private val _iotDevicesList = MutableLiveData<List<IotDevice>>()
     val iotDevicesList: LiveData<List<IotDevice>> = _iotDevicesList
 
@@ -183,45 +189,69 @@ class CalculateViewModel(
         _submissionStatus.value = null
     }
 
-    // === REALTIME MONITORING FUNCTION (DINAMIS) ===
+    // === REALTIME MONITORING FUNCTION (DIRECT RTDB) ===
+    // Kita bypass backend Railway supaya tidak kena timeout
     fun startRealtimeMonitoring(userId: Int) {
-        firestoreListener?.remove()
-        Log.d(TAG, "Starting monitoring for user_id: $userId")
+        // 1. Bersihkan listener lama jika ada
+        rtdbListener?.let {
+            rtdb.getReference("sensor").removeEventListener(it)
+        }
 
-        firestoreListener = db.collection("monitoring_live")
-            .whereEqualTo("user_id", userId)
-            .addSnapshotListener { snapshots, e ->
-                if (e != null) {
-                    Log.e(TAG, "Listen failed.", e)
-                    return@addSnapshotListener
-                }
+        Log.d(TAG, "Starting DIRECT RTDB monitoring for user_id: $userId")
 
-                if (snapshots != null && !snapshots.isEmpty) {
-                    val devices = ArrayList<IotDevice>()
-                    for (doc in snapshots.documents) {
-                        val data = doc.data
-                        if (data == null) continue
-                        try {
-                            val device = IotDevice(
-                                docId = doc.id,
-                                user_id = (data["user_id"] as? Number)?.toInt() ?: 0,
-                                device_name = data["device_name"] as? String ?: "Unknown",
-                                status = data["status"] as? String ?: "OFFLINE",
-                                watt = (data["watt"] as? Number)?.toDouble() ?: 0.0,
-                                voltase = (data["voltase"] as? Number)?.toDouble() ?: 0.0,
-                                ampere = (data["ampere"] as? Number)?.toDouble() ?: 0.0,
-                                last_update = data["last_update"] as? Timestamp
-                            )
-                            devices.add(device)
-                        } catch (ex: Exception) {
-                            Log.e(TAG, "Mapping error: ${doc.id}", ex)
+        // 2. Referensi langsung ke path "sensor" di RTDB
+        val sensorRef = rtdb.getReference("sensor")
+
+        rtdbListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    try {
+                        // 3. Ambil data manual sesuai struktur di RTDB/Arduino
+                        // Field name harus sama persis dengan yang dikirim Arduino/simulasi (case sensitive)
+                        val voltage = snapshot.child("voltage").getValue(Double::class.java) ?: 0.0
+                        val ampere = snapshot.child("current").getValue(Double::class.java) ?: 0.0
+                        val watt = snapshot.child("power").getValue(Double::class.java) ?: 0.0
+
+                        // Logika status sederhana
+                        val status = if (watt > 0.1) "ON" else "OFF"
+
+                        // 4. Mapping ke object IotDevice
+                        // DocID kita bikin dummy aja karena RTDB tidak punya Document ID kayak Firestore
+                        val device = IotDevice(
+                            docId = "sensor_utama_direct",
+                            user_id = userId,
+                            device_name = "Sensor Utama",
+                            status = status,
+                            watt = watt,
+                            voltase = voltage,
+                            ampere = ampere,
+                            last_update = Timestamp.now()
+                        )
+
+                        // Update LiveData
+                        _iotDevicesList.postValue(listOf(device))
+
+                        // Update detail view jika sedang dipilih
+                        if (_selectedIotDevice.value != null) {
+                            _selectedIotDevice.postValue(device)
                         }
+
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error parsing RTDB data", e)
                     }
-                    _iotDevicesList.value = devices
                 } else {
-                    _iotDevicesList.value = emptyList()
+                    // Data kosong atau path salah
+                    _iotDevicesList.postValue(emptyList())
                 }
             }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e(TAG, "RTDB Listen failed: ${error.message}")
+            }
+        }
+
+        // 5. Pasang listener
+        sensorRef.addValueEventListener(rtdbListener!!)
     }
 
     fun selectDevice(device: IotDevice) {
@@ -234,6 +264,9 @@ class CalculateViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        firestoreListener?.remove()
+        // [PENTING] Hapus listener saat ViewModel mati biar gak memory leak
+        rtdbListener?.let {
+            rtdb.getReference("sensor").removeEventListener(it)
+        }
     }
 }
