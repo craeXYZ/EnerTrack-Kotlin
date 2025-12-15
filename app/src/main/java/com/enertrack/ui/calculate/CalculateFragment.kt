@@ -13,11 +13,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.enertrack.R
+import com.enertrack.data.local.SessionManager
 import com.enertrack.data.model.Appliance
 import com.enertrack.data.model.IotDevice
 import com.enertrack.databinding.BottomSheetAddDeviceBinding
 import com.enertrack.databinding.FragmentCalculateBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.tabs.TabLayout
 import java.text.NumberFormat
 import java.util.Locale
@@ -27,9 +29,13 @@ class CalculateFragment : Fragment() {
     private var _binding: FragmentCalculateBinding? = null
     private val binding get() = _binding!!
 
+    private var activeSheetBinding: BottomSheetAddDeviceBinding? = null
+    private var activeBottomSheetDialog: BottomSheetDialog? = null
+
     private lateinit var viewModel: CalculateViewModel
     private lateinit var applianceAdapter: ApplianceAdapter
     private lateinit var iotAdapter: IotDeviceAdapter
+    private lateinit var sessionManager: SessionManager
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,30 +49,48 @@ class CalculateFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 1. Init ViewModel
         val factory = CalculateViewModelFactory(requireContext())
         viewModel = ViewModelProvider(this, factory)[CalculateViewModel::class.java]
+        sessionManager = SessionManager(requireContext())
 
-        // 2. Setup Tampilan
         setupManualCalculatorAdapter()
         setupIoTAdapter()
         setupClickListeners()
         setupTabLayout()
         setupDropdowns()
+        setupUIUpdates()
 
-        // 3. Ambil Data
         observeViewModel()
         viewModel.fetchHouseCapacities()
         viewModel.fetchBrands()
 
-        // FIX: Panggil startRealtimeMonitoring() di sini juga,
-        // agar listener langsung aktif saat fragment dibuat.
-        viewModel.startRealtimeMonitoring()
+        startDynamicMonitoring()
+
     }
 
-    // ==========================================
-    // 1. LOGIKA LIST MANUAL & IOT
-    // ==========================================
+    private fun setupUIUpdates() {
+        // Paksa icon panah back menjadi warna Biru (primary_accent)
+        val backArrow = (binding.btnBackToList.getChildAt(0) as? android.widget.ImageView)
+        backArrow?.setColorFilter(ContextCompat.getColor(requireContext(), R.color.primary_accent))
+
+        // Pastikan textnya juga biru
+        val backText = (binding.btnBackToList.getChildAt(1) as? android.widget.TextView)
+        backText?.setTextColor(ContextCompat.getColor(requireContext(), R.color.primary_accent))
+    }
+
+    private fun startDynamicMonitoring() {
+        val userIdStr = sessionManager.getUserId()
+        val userId = userIdStr?.toIntOrNull()
+
+        if (userId != null && userId != 0) {
+            viewModel.startRealtimeMonitoring(userId)
+        } else {
+            binding.rvIotDevices.visibility = View.GONE
+            binding.tvIotEmpty.text = "Please login to view devices"
+            binding.tvIotEmpty.visibility = View.VISIBLE
+            binding.pbIotLoading.visibility = View.GONE
+        }
+    }
 
     private fun setupManualCalculatorAdapter() {
         applianceAdapter = ApplianceAdapter(
@@ -88,55 +112,43 @@ class CalculateFragment : Fragment() {
         }
     }
 
-    // ==========================================
-    // 2. LOGIKA BOTTOM SHEET
-    // ==========================================
-
     private fun showAddDeviceBottomSheet() {
-        val dialog = BottomSheetDialog(requireContext())
         val sheetBinding = BottomSheetAddDeviceBinding.inflate(layoutInflater)
+        activeSheetBinding = sheetBinding
+
+        val dialog = BottomSheetDialog(requireContext())
+        activeBottomSheetDialog = dialog
         dialog.setContentView(sheetBinding.root)
 
-        // A. Setup Dropdown Brand
-        viewModel.brandOptions.observe(viewLifecycleOwner) { brands ->
-            if (!brands.isNullOrEmpty()) {
-                val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, brands)
-                sheetBinding.dropdownBrand.setAdapter(adapter)
-                sheetBinding.dropdownBrand.setOnClickListener { sheetBinding.dropdownBrand.showDropDown() }
-            }
+        val currentBrands = viewModel.brandOptions.value
+        if (!currentBrands.isNullOrEmpty()) {
+            val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, currentBrands)
+            sheetBinding.dropdownBrand.setAdapter(adapter)
         }
 
-        // Kalau Brand Dipilih -> Ambil Device
+        sheetBinding.dropdownBrand.setOnClickListener { sheetBinding.dropdownBrand.showDropDown() }
         sheetBinding.dropdownBrand.setOnItemClickListener { parent, _, position, _ ->
             val selectedBrand = parent.getItemAtPosition(position).toString()
+
             sheetBinding.dropdownDevice.text = null
+            sheetBinding.dropdownDevice.setAdapter(null)
             sheetBinding.etPower.text = null
             sheetBinding.layoutDeviceName.isEnabled = false
+
             viewModel.fetchDevicesByBrand(selectedBrand)
         }
 
-        // B. Setup Dropdown Device
-        viewModel.deviceOptionsForBrand.observe(viewLifecycleOwner) { devices ->
-            if (!devices.isNullOrEmpty()) {
-                val deviceNames = devices.map { it.name }
-                val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, deviceNames)
-                sheetBinding.dropdownDevice.setAdapter(adapter)
-                sheetBinding.layoutDeviceName.isEnabled = true
-                sheetBinding.dropdownDevice.setOnClickListener { sheetBinding.dropdownDevice.showDropDown() }
-            }
-        }
-
-        // Kalau Device Dipilih -> Isi Watt Otomatis
+        sheetBinding.dropdownDevice.setOnClickListener { sheetBinding.dropdownDevice.showDropDown() }
         sheetBinding.dropdownDevice.setOnItemClickListener { parent, _, position, _ ->
             val selectedName = parent.getItemAtPosition(position).toString()
             val originalList = viewModel.deviceOptionsForBrand.value
             val selectedDeviceData = originalList?.find { it.name == selectedName }
+
             if (selectedDeviceData != null) {
                 sheetBinding.etPower.setText(selectedDeviceData.powerWatt.toString())
             }
         }
 
-        // C. Tombol Save di Bottom Sheet
         sheetBinding.btnSaveDevice.setOnClickListener {
             val brand = sheetBinding.dropdownBrand.text.toString()
             val deviceName = sheetBinding.dropdownDevice.text.toString()
@@ -159,26 +171,19 @@ class CalculateFragment : Fragment() {
             }
         }
 
+        dialog.setOnDismissListener {
+            activeSheetBinding = null
+            activeBottomSheetDialog = null
+        }
+
         dialog.show()
     }
 
-    // ==========================================
-    // 3. UI LISTENERS & TABS
-    // ==========================================
-
     private fun setupClickListeners() {
         binding.btnBackToList.setOnClickListener { showIoTListMode() }
-        binding.btnRefreshIot.setOnClickListener {
-            // FIX: Tambahkan indikator loading saat refresh
-            binding.pbIotLoading.visibility = View.VISIBLE
-            viewModel.startRealtimeMonitoring()
-        }
 
-        binding.fabAddDevice.setOnClickListener {
-            showAddDeviceBottomSheet()
-        }
+        binding.fabAddDevice.setOnClickListener { showAddDeviceBottomSheet() }
 
-        // --- TAMBAHAN: LOGIKA TOMBOL SAVE TO HISTORY ---
         binding.btnSaveHistory.setOnClickListener {
             val capacity = binding.dropdownCapacity.text.toString()
 
@@ -192,8 +197,10 @@ class CalculateFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            binding.btnSaveHistory.isEnabled = false
+            binding.btnSaveHistory.text = "Saving..."
+
             viewModel.submitDeviceList(capacity, "Postpaid")
-            Toast.makeText(requireContext(), "Saving to history...", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -211,9 +218,8 @@ class CalculateFragment : Fragment() {
                         binding.iotContentContainer.visibility = View.VISIBLE
                         binding.fabAddDevice.hide()
                         showIoTListMode()
-                        // FIX: Memastikan monitoring dimulai dan loading ditunjukkan saat tab IoT dipilih
                         binding.pbIotLoading.visibility = View.VISIBLE
-                        viewModel.startRealtimeMonitoring()
+                        startDynamicMonitoring()
                     }
                 }
             }
@@ -232,16 +238,32 @@ class CalculateFragment : Fragment() {
         }
     }
 
-    // ==========================================
-    // 4. OBSERVE DATA & HELPERS
-    // ==========================================
-
     private fun observeViewModel() {
-        // --- IoT Data ---
-        viewModel.iotDevicesList.observe(viewLifecycleOwner) { devices ->
-            // FIX: Selalu sembunyikan loading setelah data diterima (baik kosong atau ada)
-            binding.pbIotLoading.visibility = View.GONE
+        viewModel.brandOptions.observe(viewLifecycleOwner) { brands ->
+            activeSheetBinding?.let { sheet ->
+                if (!brands.isNullOrEmpty()) {
+                    val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, brands)
+                    sheet.dropdownBrand.setAdapter(adapter)
+                }
+            }
+        }
 
+        viewModel.deviceOptionsForBrand.observe(viewLifecycleOwner) { devices ->
+            activeSheetBinding?.let { sheet ->
+                if (!devices.isNullOrEmpty()) {
+                    val deviceNames = devices.map { it.name }
+                    val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, deviceNames)
+                    sheet.dropdownDevice.setAdapter(adapter)
+                    sheet.layoutDeviceName.isEnabled = true
+                    sheet.dropdownDevice.showDropDown()
+                } else {
+                    sheet.dropdownDevice.setAdapter(null)
+                }
+            }
+        }
+
+        viewModel.iotDevicesList.observe(viewLifecycleOwner) { devices ->
+            binding.pbIotLoading.visibility = View.GONE
             if (devices.isNullOrEmpty()) {
                 binding.rvIotDevices.visibility = View.GONE
                 binding.tvIotEmpty.visibility = View.VISIBLE
@@ -249,26 +271,92 @@ class CalculateFragment : Fragment() {
                 binding.rvIotDevices.visibility = View.VISIBLE
                 binding.tvIotEmpty.visibility = View.GONE
                 iotAdapter.setData(devices)
+
+                if (binding.layoutIotDetail.isVisible) {
+                    val currentSelectedId = viewModel.selectedIotDevice.value?.docId
+                    if (currentSelectedId != null) {
+                        val updatedDeviceData = devices.find { it.docId == currentSelectedId }
+                        if (updatedDeviceData != null) {
+                            viewModel.selectDevice(updatedDeviceData)
+                        }
+                    }
+                }
             }
         }
 
         viewModel.selectedIotDevice.observe(viewLifecycleOwner) { device ->
             if (device != null) {
+                // [UPDATED] Persiapan Warna
+                val whiteColor = ContextCompat.getColor(requireContext(), R.color.white)
+                // Gunakan warna border yang sama dengan card Voltage/Current (grey_300 atau neutral_200)
+                val borderColor = ContextCompat.getColor(requireContext(), R.color.grey_300)
+
+                // --- CARD LOAD (Main Wattage / 54W) ---
+                val cardLoad = binding.tvMainWatt.parent.parent as? MaterialCardView
+                cardLoad?.apply {
+                    setCardBackgroundColor(whiteColor)
+
+                    // [IMPORTANT FIX] Hapus elevation (shadow) supaya "Surface Tint" (efek biru) hilang sepenuhnya
+                    cardElevation = 0f
+
+                    // [ADD] Tambahkan Stroke (Border) agar batasnya tetap terlihat rapi & konsisten
+                    strokeWidth = (1 * resources.displayMetrics.density).toInt() // setara 1dp
+                    strokeColor = borderColor
+                }
+
+                // --- CARD VOLTAGE ---
+                val cardVoltage = binding.tvDetailVoltage.parent.parent as? MaterialCardView
+                cardVoltage?.setCardBackgroundColor(whiteColor)
+
+                // --- CARD CURRENT ---
+                val cardCurrent = binding.tvDetailCurrent.parent.parent as? MaterialCardView
+                cardCurrent?.setCardBackgroundColor(whiteColor)
+
                 binding.tvDetailDeviceName.text = device.device_name
                 binding.tvDetailDeviceInfo.text = "ID: ${device.docId}"
 
-                when (device.status.uppercase()) {
+                // Ambil referensi ke card status di detail (Container Status Atas)
+                val cardStatus = binding.tvStatusLabel.parent.parent.parent as? MaterialCardView
+
+                val isHighVoltage = device.voltase > 250.0
+                val displayStatus = when {
+                    isHighVoltage -> "DANGER"
+                    device.watt > 0 -> "ON"
+                    else -> "OFF"
+                }
+
+                when (displayStatus) {
+                    "DANGER" -> {
+                        binding.tvStatusLabel.text = "Status: DANGER (Overvoltage)"
+                        val solidRed = ContextCompat.getColor(requireContext(), R.color.dangerRed)
+                        val bgRed = ContextCompat.getColor(requireContext(), R.color.bgLightRed)
+
+                        binding.tvStatusLabel.setTextColor(solidRed)
+                        cardStatus?.setCardBackgroundColor(bgRed)
+                        val icon = (binding.tvStatusLabel.parent.parent as ViewGroup).getChildAt(0) as? android.widget.ImageView
+                        icon?.setColorFilter(solidRed)
+                    }
                     "ON" -> {
-                        binding.tvStatusLabel.text = "Status: Connected (Active)"
-                        binding.tvStatusLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.energyGreen))
+                        binding.tvStatusLabel.text = "Status: Active"
+                        val solidGreen = ContextCompat.getColor(requireContext(), R.color.energyGreen)
+                        val bgGreen = ContextCompat.getColor(requireContext(), R.color.bgLightGreen)
+
+                        binding.tvStatusLabel.setTextColor(solidGreen)
+                        cardStatus?.setCardBackgroundColor(bgGreen)
+
+                        val icon = (binding.tvStatusLabel.parent.parent as ViewGroup).getChildAt(0) as? android.widget.ImageView
+                        icon?.setColorFilter(solidGreen)
                     }
                     "OFF" -> {
-                        binding.tvStatusLabel.text = "Status: Standby (OFF)"
-                        binding.tvStatusLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.energyOrange))
-                    }
-                    else -> {
-                        binding.tvStatusLabel.text = "Status: Offline"
-                        binding.tvStatusLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_secondary))
+                        binding.tvStatusLabel.text = "Status: Standby"
+                        val solidOrange = ContextCompat.getColor(requireContext(), R.color.energyOrange)
+                        val bgOrange = ContextCompat.getColor(requireContext(), R.color.bgLightOrange)
+
+                        binding.tvStatusLabel.setTextColor(solidOrange)
+                        cardStatus?.setCardBackgroundColor(bgOrange)
+
+                        val icon = (binding.tvStatusLabel.parent.parent as ViewGroup).getChildAt(0) as? android.widget.ImageView
+                        icon?.setColorFilter(solidOrange)
                     }
                 }
 
@@ -286,45 +374,53 @@ class CalculateFragment : Fragment() {
             }
         }
 
-        // --- Manual Calc Data ---
         viewModel.houseCapacityOptions.observe(viewLifecycleOwner) { options ->
             val adapter = binding.dropdownCapacity.adapter as ArrayAdapter<String>
             adapter.clear()
             adapter.addAll(options)
+            adapter.notifyDataSetChanged()
         }
 
-        // --- Update List Manual & Analisis Consumption ---
+        viewModel.selectedHouseCapacity.observe(viewLifecycleOwner) { selected ->
+            if (!selected.isNullOrEmpty() && binding.dropdownCapacity.text.toString() != selected) {
+                binding.dropdownCapacity.setText(selected, false)
+            }
+            updateConsumptionAnalysis(viewModel.applianceList.value ?: emptyList())
+        }
+
         viewModel.applianceList.observe(viewLifecycleOwner) { list ->
             applianceAdapter.submitList(list)
-
-            if (list.isEmpty()) {
-                binding.layoutEmptyState.visibility = View.VISIBLE
-                binding.cardSummary.visibility = View.GONE
-            } else {
-                binding.layoutEmptyState.visibility = View.GONE
-                binding.cardSummary.visibility = View.VISIBLE
-            }
-
             updateManualSummary(list)
             updateConsumptionAnalysis(list)
+
+            if (list.isNullOrEmpty()) {
+                binding.cardSummary.visibility = View.GONE
+                binding.layoutEmptyState.visibility = View.VISIBLE
+                binding.tvTotalSummary.visibility = View.GONE
+            } else {
+                binding.cardSummary.visibility = View.VISIBLE
+                binding.layoutEmptyState.visibility = View.GONE
+                binding.tvTotalSummary.visibility = View.VISIBLE
+            }
         }
 
-        // --- Observer Status Submit ---
         viewModel.submissionStatus.observe(viewLifecycleOwner) { result ->
+            if (result == null) return@observe
+
+            binding.btnSaveHistory.isEnabled = true
+            binding.btnSaveHistory.text = "Save to History"
+
             when (result) {
                 is com.enertrack.data.repository.Result.Success -> {
-                    Toast.makeText(requireContext(), "✅ Data saved successfully!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), "✅ Data saved successfully!", Toast.LENGTH_SHORT).show()
+                    viewModel.resetSubmissionStatus()
                 }
                 is com.enertrack.data.repository.Result.Failure -> {
-                    Toast.makeText(requireContext(), "❌ Failed to save: ${result.exception.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), "❌ Failed to save: ${result.exception.message}", Toast.LENGTH_SHORT).show()
+                    viewModel.resetSubmissionStatus()
                 }
                 else -> {}
             }
-        }
-
-        viewModel.selectedHouseCapacity.observe(viewLifecycleOwner) {
-            val list = viewModel.applianceList.value ?: emptyList()
-            updateConsumptionAnalysis(list)
         }
     }
 
@@ -340,14 +436,12 @@ class CalculateFragment : Fragment() {
         binding.layoutIotDetail.visibility = View.VISIBLE
     }
 
-    private fun formatNumber(value: Double): String {
-        return NumberFormat.getInstance(Locale("id", "ID")).format(value)
-    }
+    private fun formatNumber(value: Double): String = NumberFormat.getInstance(Locale("id", "ID")).format(value)
 
     private fun updateManualSummary(list: List<Appliance>) {
         val totalCost = list.sumOf { it.monthlyCost }
         val formatter = NumberFormat.getCurrencyInstance(Locale("id", "ID"))
-        formatter.maximumFractionDigits = 0 // UPDATE: Hapus desimal koma (Rp 150.000)
+        formatter.maximumFractionDigits = 0
 
         binding.tvTotalSummary.text = "Total Est: ${formatter.format(totalCost)} / month"
         binding.tvTotalMonthlyCost.text = formatter.format(totalCost)
@@ -409,5 +503,7 @@ class CalculateFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        activeSheetBinding = null
+        activeBottomSheetDialog = null
     }
 }

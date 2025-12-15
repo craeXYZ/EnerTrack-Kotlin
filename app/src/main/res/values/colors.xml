@@ -1,24 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Warna dari Brief (Baru Ditambah/Disesuaikan) -->
-    <color name="main_background">#F7F8FC</color> <!-- Background utama -->
-    <color name="primary_accent">#3B82F6</color> <!-- Accent utama (mainBlue kamu) -->
-    <color name="soft_blue_background">#EAF2FF</color> <!-- AppBar & BottomNav active -->
-    <color name="light_blue_gradient">#E0F2FE</color> <!-- Chart gradient end -->
-    <color name="recent_activity_bg">#F9F9FF</color> <!-- List recent activity -->
-    <color name="text_primary">#111827</color> <!-- Teks utama (neutral_900 kamu) -->
-    <color name="text_secondary">#6B7280</color> <!-- Teks sekunder (neutral_500 kamu) -->
-    <color name="text_disabled">#9CA3AF</color> <!-- Ikon inaktif (neutral_400 kamu) -->
-    <color name="card_background">#FFFFFFFF</color> <!-- Kartu (white kamu) -->
+    <!-- ========================================== -->
+    <!-- WARNA BARU (LIGHT THEME) -->
+    <!-- ========================================== -->
+    <color name="main_background">#F7F8FC</color> <!-- Background utama Light -->
+    <color name="primary_accent">#3B82F6</color> <!-- Accent utama (Biru) -->
+    <color name="soft_blue_background">#EAF2FF</color> <!-- Container Biru Muda -->
+    <color name="light_blue_gradient">#E0F2FE</color>
+    <color name="recent_activity_bg">#F9F9FF</color>
 
+    <color name="text_primary">#111827</color> <!-- Hitam Pekat -->
+    <color name="text_secondary">#6B7280</color> <!-- Abu Gelap -->
+    <color name="text_disabled">#9CA3AF</color> <!-- Abu Mati -->
+    <color name="card_background">#FFFFFFFF</color> <!-- Putih -->
 
-    <!-- Warna Lama Kamu (Masih Berguna) -->
+    <!-- ========================================== -->
+    <!-- WARNA BARU (DARK THEME - TAMBAHAN) -->
+    <!-- ========================================== -->
+    <!-- Background Utama Dark: Jangan hitam pekat #000, bikin agak abu dikit biar mata gak sakit -->
+    <color name="dark_background">#121212</color>
+
+    <!-- Surface/Card Dark: Lebih terang dikit dari background -->
+    <color name="dark_surface">#1E1E1E</color>
+    <color name="dark_surface_variant">#2C2C2C</color>
+
+    <!-- Primary di Dark Mode biasanya lebih pastel/terang biar kontras -->
+    <color name="primary_accent_dark">#60A5FA</color> <!-- Blue 400 (Lebih terang dari 3B82F6) -->
+
+    <!-- Container di Dark Mode -->
+    <color name="dark_primary_container">#1E3A8A</color> <!-- Biru Gelap banget -->
+    <color name="dark_on_primary_container">#DBEAFE</color> <!-- Biru muda banget (Text di atas container) -->
+
+    <!-- Text di Dark Mode -->
+    <color name="text_primary_dark">#F3F4F6</color> <!-- Putih/Abu Terang (Neutral 100) -->
+    <color name="text_secondary_dark">#D1D5DB</color> <!-- Abu Sedang (Neutral 300) -->
+    <color name="text_disabled_dark">#6B7280</color> <!-- Abu Gelap (Neutral 500) -->
+
+    <!-- Outline/Border -->
+    <color name="outline_dark">#4B5563</color>
+
+    <!-- ========================================== -->
+    <!-- WARNA LAMA (KEBUTUHAN LEGACY) -->
+    <!-- ========================================== -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="mainBlue">#3B82F6</color> <!-- Duplikat, tapi biarin aja -->
+    <color name="mainBlue">#3B82F6</color>
     <color name="blue_500">#2196F3</color>
     <color name="mirage">#1A253C</color>
+
     <color name="neutral_50">#F9FAFB</color>
     <color name="neutral_100">#F3F4F6</color>
     <color name="neutral_200">#E5E7EB</color>
@@ -35,7 +65,7 @@
     <color name="energyGreen">#10B981</color>
     <color name="energyOrange">#F59E0B</color>
 
-    <!-- Background Colors -->
+    <!-- Background Colors (Pastel) -->
     <color name="bgLightGreen">#E8F5E9</color>
     <color name="bgLightOrange">#FFF3E0</color>
     <color name="bgLightRed">#FFEBEE</color>

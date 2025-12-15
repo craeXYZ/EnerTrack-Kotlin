@@ -1,11 +1,11 @@
 package com.enertrack.ui.calculate
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.enertrack.R
 import com.enertrack.data.model.IotDevice
@@ -42,29 +42,88 @@ class IotDeviceAdapter(
 
         fun bind(device: IotDevice) {
             tvName.text = device.device_name
+            val context = itemView.context
 
-            // --- LOGIKA WARNA STATUS (Update) ---
-            when (device.status.uppercase()) {
+            // Logika Status:
+            // DANGER -> Voltage > 250
+            // ON -> Watt > 0
+            // OFF/Standby -> Watt == 0
+
+            val isHighVoltage = device.voltase > 250.0
+
+            val displayStatus = when {
+                isHighVoltage -> "DANGER"
+                device.watt > 0 -> "ON"
+                else -> "OFF"
+            }
+
+            // Siapkan warna putih untuk TINT icon biar kontras
+            val colorWhite = ContextCompat.getColor(context, R.color.white)
+
+            when (displayStatus) {
+                "DANGER" -> {
+                    // MERAH
+                    tvStatus.text = "Danger • ${device.voltase} V"
+                    val solidRed = ContextCompat.getColor(context, R.color.dangerRed)
+                    val bgRed = ContextCompat.getColor(context, R.color.bgLightRed)
+
+                    // [UPDATED] Container Icon jadi Merah Solid, Icon-nya jadi Putih
+                    ivIcon.setBackgroundColor(bgRed)
+                    ivIcon.setColorFilter(solidRed)
+
+                    // Text warna merah
+                    tvStatus.setTextColor(solidRed)
+
+                    // Card Background Soft
+                    card.setCardBackgroundColor(bgRed)
+                }
                 "ON" -> {
-                    // HIJAU (Aktif)
-                    tvStatus.text = "Online • ${device.watt} W"
-                    tvStatus.setTextColor(Color.parseColor("#4CAF50"))
-                    ivIcon.setColorFilter(Color.parseColor("#2196F3"))
-                    ivIcon.setBackgroundResource(R.drawable.bg_rounded_light_green)
+                    // HIJAU
+                    tvStatus.text = "Active • ${device.watt} W"
+                    val solidGreen = ContextCompat.getColor(context, R.color.energyGreen)
+                    val bgGreen = ContextCompat.getColor(context, R.color.bgLightGreen)
+
+                    // [UPDATED] Container Icon jadi Hijau Solid, Icon-nya jadi Putih
+                    ivIcon.setBackgroundColor(bgGreen)
+                    ivIcon.setColorFilter(solidGreen)
+
+                    // Text warna hijau
+                    tvStatus.setTextColor(solidGreen)
+
+                    // Card Background Soft
+                    card.setCardBackgroundColor(bgGreen)
                 }
                 "OFF" -> {
-                    // ORANYE (Standby)
+                    // ORANGE
                     tvStatus.text = "Standby • 0 W"
-                    tvStatus.setTextColor(Color.parseColor("#FF9800")) // Oranye
-                    ivIcon.setColorFilter(Color.parseColor("#FF9800")) // Icon Oranye
-                    ivIcon.setBackgroundColor(Color.parseColor("#FFF3E0")) // Background oranye muda
+                    val solidOrange = ContextCompat.getColor(context, R.color.energyOrange)
+                    val bgOrange = ContextCompat.getColor(context, R.color.bgLightOrange)
+
+                    // [UPDATED] Container Icon jadi Orange Solid, Icon-nya jadi Putih
+                    ivIcon.setBackgroundColor(bgOrange)
+                    ivIcon.setColorFilter(solidOrange)
+
+                    // Text warna orange
+                    tvStatus.setTextColor(solidOrange)
+
+                    // Card Background Soft
+                    card.setCardBackgroundColor(bgOrange)
                 }
                 else -> {
                     // ABU-ABU (Offline)
                     tvStatus.text = "Offline"
-                    tvStatus.setTextColor(Color.parseColor("#9E9E9E"))
-                    ivIcon.setColorFilter(Color.parseColor("#757575"))
-                    ivIcon.setBackgroundColor(Color.parseColor("#F5F5F5"))
+                    val solidGrey = ContextCompat.getColor(context, R.color.text_secondary)
+                    val bgGrey = ContextCompat.getColor(context, R.color.neutral_100)
+
+                    // [UPDATED] Container Icon jadi Abu Solid, Icon-nya jadi Putih
+                    ivIcon.setBackgroundColor(bgGrey)
+                    ivIcon.setColorFilter(solidGrey)
+
+                    // Text warna abu
+                    tvStatus.setTextColor(solidGrey)
+
+                    // Card Background Soft
+                    card.setCardBackgroundColor(bgGrey)
                 }
             }
 

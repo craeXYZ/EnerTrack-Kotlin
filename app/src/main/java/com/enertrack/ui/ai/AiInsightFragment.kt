@@ -2,6 +2,7 @@ package com.enertrack.ui.ai
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +11,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 class AiInsightFragment : Fragment() {
 
     private var _binding: FragmentAiInsightBinding? = null
+    // Property ini hanya valid antara onCreateView dan onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -57,52 +58,65 @@ class AiInsightFragment : Fragment() {
     }
 
     private fun fetchInsightData() {
+        if (_binding == null) return
         showLoadingState()
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val apiService = RetrofitClient.getInstance(requireContext())
 
-                // 1. CEK ALAT ELEKTRONIK DULU (PENTING!)
-                // User baru ("Rappi") pasti list-nya kosong.
-                // Kita cegah dia dapet Grade A palsu (karena 0 kwh dianggap efisien).
-                val applianceResponse = apiService.getUserAppliances()
-                val hasAppliances = if (applianceResponse.isSuccessful) {
-                    !applianceResponse.body().isNullOrEmpty()
+                // [LOGIC BARU YANG BENAR]
+                // Cek Riwayat Perangkat (History) dulu.
+                // Endpoint ini (getDeviceHistory) pasti berisi data yang diinput user lewat kalkulator.
+                val historyResponse = apiService.getDeviceHistory()
+
+                if (_binding == null) return@launch
+
+                // Kalau history kosong atau gagal ambil, anggap User Baru -> Tampilkan Empty State
+                val isHistoryEmpty = if (historyResponse.isSuccessful) {
+                    historyResponse.body().isNullOrEmpty()
                 } else {
-                    true // Kalau gagal cek, anggap aja ada biar lanjut (fallback)
+                    true
                 }
 
-                // Kalau alat kosong, langsung STOP dan tampilkan Empty State
-                if (!hasAppliances) {
+                if (isHistoryEmpty) {
+                    Log.d("DEBUG_AI", "History kosong. Menampilkan Empty State.")
                     binding.swipeRefreshInsight.isRefreshing = false
                     showEmptyState()
                     return@launch
                 }
 
-                // 2. Kalau punya alat, baru ambil Insight
+                // Kalau History ADA ISINYA, baru kita minta nilai ke AI
+                Log.d("DEBUG_AI", "History ada (${historyResponse.body()?.size} items). Mengambil Insight...")
                 val response = apiService.getInsight()
+
+                if (_binding == null) return@launch
 
                 binding.swipeRefreshInsight.isRefreshing = false
 
                 if (response.isSuccessful && response.body() != null) {
                     val data = response.body()!!
+                    Log.d("DEBUG_AI", "Dapat Data Insight! Grade: ${data.grade}")
 
-                    // Cek double protection
                     if (data.grade.isNullOrBlank() || data.grade.equals("N/A", ignoreCase = true)) {
                         showEmptyState()
                     } else {
                         updateUI(data.grade, data.message, data.tips, data.calculationBasis)
                     }
                 } else {
-                    showErrorState("Failed to load analysis. (${response.code()})")
-                    if (response.code() == 401) {
+                    Log.e("DEBUG_AI", "Gagal fetch insight: ${response.code()}")
+                    if (_binding != null) {
+                        showErrorState("Failed to load analysis. (${response.code()})")
+                    }
+                    if (response.code() == 401 && context != null) {
                         Toast.makeText(context, "Session expired, please login again", Toast.LENGTH_LONG).show()
                     }
                 }
             } catch (e: Exception) {
-                binding.swipeRefreshInsight.isRefreshing = false
-                showErrorState("Check your internet connection.")
+                if (_binding != null) {
+                    binding.swipeRefreshInsight.isRefreshing = false
+                    showErrorState("Check your internet connection.")
+                }
                 e.printStackTrace()
             }
         }
@@ -111,6 +125,7 @@ class AiInsightFragment : Fragment() {
     // === STATE HANDLING ===
 
     private fun showLoadingState() {
+        if (_binding == null) return
         binding.tvGrade.text = "..."
         binding.tvGrade.setTextColor(Color.GRAY)
         binding.tvGradeMessage.text = "Analyzing your usage..."
@@ -118,15 +133,15 @@ class AiInsightFragment : Fragment() {
     }
 
     private fun showEmptyState() {
+        if (_binding == null) return
         binding.tvGrade.text = "-"
         binding.tvGrade.setTextColor(Color.parseColor("#BDBDBD")) // Abu-abu
         binding.tvGradeMessage.text = "Not enough data for analysis."
         binding.tvSubtitle.text = "Energy Efficiency" // Reset subtitle
 
-        // Tampilkan pesan di kotak tips
         binding.layoutTipsContainer.removeAllViews()
         val emptyText = TextView(requireContext()).apply {
-            text = "Start adding your electronic devices in the Home menu to get AI insights & efficiency grade."
+            text = "Start adding your electronic devices in the Home/Calculator menu to get AI insights."
             setTextColor(Color.GRAY)
             setPadding(32, 32, 32, 32)
             gravity = Gravity.CENTER
@@ -136,6 +151,7 @@ class AiInsightFragment : Fragment() {
     }
 
     private fun showErrorState(message: String) {
+        if (_binding == null) return
         binding.tvGrade.text = "!"
         binding.tvGrade.setTextColor(Color.parseColor("#E57373")) // Merah muda
         binding.tvGradeMessage.text = message
@@ -144,6 +160,8 @@ class AiInsightFragment : Fragment() {
     // === UPDATE UI ===
 
     private fun updateUI(grade: String, message: String, tips: List<Tip>, basis: String?) {
+        if (_binding == null) return
+
         binding.tvGrade.text = grade
         binding.tvGradeMessage.text = message
 
@@ -186,8 +204,6 @@ class AiInsightFragment : Fragment() {
 
             tvTitle.text = tip.title
             tvDesc.text = tip.description
-
-            // Set icon default biar nggak null
             imgIcon.setImageResource(R.drawable.ic_lightbulb_outline)
 
             binding.layoutTipsContainer.addView(tipView)

@@ -20,8 +20,6 @@ class CalculateViewModel(
 ) : ViewModel() {
 
     private val TAG = "CalculateViewModel"
-
-    // Listener Registration untuk cleanup
     private var firestoreListener: ListenerRegistration? = null
 
     // --- MANUAL CALC DATA ---
@@ -38,14 +36,17 @@ class CalculateViewModel(
     private val _deviceOptionsForBrand = MutableLiveData<List<DeviceResponse>>()
     val deviceOptionsForBrand: LiveData<List<DeviceResponse>> = _deviceOptionsForBrand
 
-    private val _submissionStatus = MutableLiveData<Result<SubmitResponseData>>()
-    val submissionStatus: LiveData<Result<SubmitResponseData>> = _submissionStatus
+    // [PENTING] Nullable agar bisa di-reset
+    private val _submissionStatus = MutableLiveData<Result<SubmitResponseData>?>()
+    val submissionStatus: LiveData<Result<SubmitResponseData>?> = _submissionStatus
+
+    // Flag anti-spam (cadangan)
+    private var isSubmitting = false
 
     private var categoriesMap: Map<Int, String> = emptyMap()
 
-    // --- REALTIME IoT DATA (FIRESTORE) ---
+    // --- REALTIME IoT DATA ---
     private val db = Firebase.firestore
-
     private val _iotDevicesList = MutableLiveData<List<IotDevice>>()
     val iotDevicesList: LiveData<List<IotDevice>> = _iotDevicesList
 
@@ -54,7 +55,6 @@ class CalculateViewModel(
 
     init {
         fetchCategoriesMap()
-        // startRealtimeMonitoring() // Jangan panggil di init jika dipanggil di Fragment
     }
 
     // --- FUNGSI HELPER MANUAL ---
@@ -86,9 +86,7 @@ class CalculateViewModel(
         viewModelScope.launch {
             calculateRepository.getHouseCapacities().onSuccess { data ->
                 _houseCapacityOptions.value = data
-                if (selectedHouseCapacity.value == null && data.isNotEmpty()) {
-                    selectedHouseCapacity.value = data[0]
-                }
+                // Auto-select dimatikan agar hint muncul
             }
         }
     }
@@ -139,10 +137,13 @@ class CalculateViewModel(
         _applianceList.value = currentList.filter { it.id != id }
     }
 
-    // --- FUNGSI SUBMIT ---
     fun submitDeviceList(houseCapacity: String, billingType: String) {
+        if (isSubmitting) return
+
         val list = _applianceList.value
         if (list.isNullOrEmpty()) return
+
+        isSubmitting = true
 
         val capacityValue = houseCapacity.replace(" VA", "").replace(".", "").toDoubleOrNull() ?: 0.0
 
@@ -169,26 +170,26 @@ class CalculateViewModel(
             calculateRepository.submitDevices(payload).onSuccess { data ->
                 _submissionStatus.value = Result.Success(data)
                 _applianceList.value = emptyList()
+                isSubmitting = false
             }.onFailure { e ->
                 _submissionStatus.value = Result.Failure(e)
+                isSubmitting = false
             }
         }
     }
 
+    // [FIX] Reset status setelah pesan ditampilkan
+    fun resetSubmissionStatus() {
+        _submissionStatus.value = null
+    }
 
-    // === REALTIME MONITORING FUNCTION ===
-    fun startRealtimeMonitoring() {
-        // Hapus listener lama jika ada untuk mencegah duplikasi
+    // === REALTIME MONITORING FUNCTION (DINAMIS) ===
+    fun startRealtimeMonitoring(userId: Int) {
         firestoreListener?.remove()
+        Log.d(TAG, "Starting monitoring for user_id: $userId")
 
-        // FIX PENTING: Ganti ID jadi 16 agar sinkron dengan Backend Go baru
-        val currentUserId = 16
-
-        Log.d(TAG, "Starting monitoring for user_id: $currentUserId")
-
-        // Kita gunakan variabel listener agar bisa dicancel nanti
         firestoreListener = db.collection("monitoring_live")
-            .whereEqualTo("user_id", currentUserId)
+            .whereEqualTo("user_id", userId)
             .addSnapshotListener { snapshots, e ->
                 if (e != null) {
                     Log.e(TAG, "Listen failed.", e)
@@ -196,18 +197,11 @@ class CalculateViewModel(
                 }
 
                 if (snapshots != null && !snapshots.isEmpty) {
-                    Log.d(TAG, "Data received. Documents count: ${snapshots.size()}")
-
                     val devices = ArrayList<IotDevice>()
                     for (doc in snapshots.documents) {
-                        // Gunakan data!! karena kita yakin tidak null di dalam snapshot yang valid
                         val data = doc.data
                         if (data == null) continue
-
-                        Log.d(TAG, "Processing doc: ${doc.id} | Data: $data")
-
                         try {
-                            // Manual mapping yang aman
                             val device = IotDevice(
                                 docId = doc.id,
                                 user_id = (data["user_id"] as? Number)?.toInt() ?: 0,
@@ -216,26 +210,15 @@ class CalculateViewModel(
                                 watt = (data["watt"] as? Number)?.toDouble() ?: 0.0,
                                 voltase = (data["voltase"] as? Number)?.toDouble() ?: 0.0,
                                 ampere = (data["ampere"] as? Number)?.toDouble() ?: 0.0,
-                                // FIX: Hapus kwh_total
                                 last_update = data["last_update"] as? Timestamp
                             )
                             devices.add(device)
                         } catch (ex: Exception) {
-                            Log.e(TAG, "FATAL ERROR during manual mapping for doc: ${doc.id}", ex)
+                            Log.e(TAG, "Mapping error: ${doc.id}", ex)
                         }
                     }
                     _iotDevicesList.value = devices
-
-                    // Update detail view jika sedang dibuka
-                    val currentSelection = _selectedIotDevice.value
-                    if (currentSelection != null) {
-                        val updatedDevice = devices.find { it.docId == currentSelection.docId }
-                        if (updatedDevice != null) {
-                            _selectedIotDevice.value = updatedDevice
-                        }
-                    }
                 } else {
-                    Log.d(TAG, "No documents found for user_id: $currentUserId")
                     _iotDevicesList.value = emptyList()
                 }
             }
@@ -251,6 +234,6 @@ class CalculateViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        firestoreListener?.remove() // Bersihkan listener saat ViewModel dihancurkan
+        firestoreListener?.remove()
     }
 }

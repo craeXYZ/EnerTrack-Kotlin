@@ -52,9 +52,9 @@ class MainActivity : AppCompatActivity() {
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
-            Toast.makeText(this, "Notifikasi Diizinkan! IoT Alert aktif.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Notification Granted.", Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(this, "Notifikasi Ditolak.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Notication Rejected.", Toast.LENGTH_LONG).show()
         }
     }
 

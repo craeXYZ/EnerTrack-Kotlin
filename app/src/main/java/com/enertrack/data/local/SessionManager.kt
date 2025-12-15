@@ -64,19 +64,21 @@ class SessionManager(private val context: Context) {
     // Fungsi ambil User ID
     fun getUserId(): String? = runBlocking {
         context.dataStore.data.map { preferences ->
-            preferences[USER_ID_KEY]
+            // PERBAIKAN: Gunakan Elvis operator (?: "") untuk mengembalikan
+            // string kosong jika DataStore belum pernah memiliki nilai (null).
+            preferences[USER_ID_KEY] ?: ""
         }.first()
     }
 
     fun getUsername(): String? = runBlocking {
         context.dataStore.data.map { preferences ->
-            preferences[USERNAME_KEY]
+            preferences[USERNAME_KEY] ?: ""
         }.first()
     }
 
     fun getEmail(): String? = runBlocking {
         context.dataStore.data.map { preferences ->
-            preferences[EMAIL_KEY]
+            preferences[EMAIL_KEY] ?: ""
         }.first()
     }
 

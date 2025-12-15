@@ -4,7 +4,7 @@
     android:shape="rectangle">
 
     <!-- Warna background (Hijau Muda) -->
-    <solid android:color="@color/energyGreen"/>
+    <solid android:color="@color/bgLightGreen"/>
 
     <!-- Kelengkungan sudut (Rounded Corners) -->
     <corners android:radius="12dp"/>

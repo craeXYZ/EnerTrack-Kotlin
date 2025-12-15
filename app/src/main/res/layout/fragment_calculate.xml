@@ -50,7 +50,7 @@
                             style="@style/TextAppearance.EnerTrack.Label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Manual vs IoT Monitor" />
+                            android:text="Calculate &amp; IoT Monitor" />
                     </LinearLayout>
 
                     <com.google.android.material.tabs.TabLayout
@@ -60,7 +60,7 @@
                         <com.google.android.material.tabs.TabItem
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Manual Calc"/>
+                            android:text="Calculate"/>
                         <com.google.android.material.tabs.TabItem
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -589,16 +589,6 @@
                                 </LinearLayout>
                             </com.google.android.material.card.MaterialCardView>
                         </LinearLayout>
-
-                        <!-- TOMBOL REFRESH IoT -->
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btn_refresh_iot"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Refresh Connection"
-                            style="@style/Widget.Material3.Button.OutlinedButton"
-                            android:textColor="@color/mainBlue"
-                            app:strokeColor="@color/mainBlue"/>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

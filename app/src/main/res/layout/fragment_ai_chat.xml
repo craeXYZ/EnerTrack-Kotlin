@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F9FAFB"
+    android:background="@color/main_background"
     tools:context=".ui.ai.AiChatFragment">
 
     <!-- Header Chat -->
@@ -17,12 +17,13 @@
         android:elevation="2dp"
         android:gravity="center_vertical">
 
+        <!-- UPDATED: Tint diganti jadi primary_accent (Biru) -->
         <ImageView
             android:id="@+id/btn_back_chat"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_arrow_back"
-            app:tint="@android:color/black"
+            app:tint="@color/primary_accent"
             android:clickable="true"
             android:focusable="true"
             android:background="?attr/selectableItemBackgroundBorderless"/>
@@ -45,6 +46,7 @@
     </LinearLayout>
 
     <!-- === DROPDOWN MATERIAL DESIGN === -->
+    <!-- UPDATED: Ditambah boxBackgroundColor putih agar background input tidak abu/biru -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/layout_device_select"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -52,8 +54,10 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="16dp"
+        app:boxBackgroundColor="@color/white"
         android:hint="Select Device">
 
+        <!-- UPDATED: Ditambah popupBackground putih agar list dropdown putih bersih -->
         <AutoCompleteTextView
             android:id="@+id/dropdown_device_select"
             android:layout_width="match_parent"
@@ -62,6 +66,7 @@
             android:padding="12dp"
             android:textSize="14sp"
             android:text="Select Device (General)"
+            android:popupBackground="@color/white"
             android:dropDownHeight="250dp"/>
 
     </com.google.android.material.textfield.TextInputLayout>
